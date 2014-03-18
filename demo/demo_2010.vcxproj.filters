@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns:atg="http://atg.xbox.com" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8e114980-c1a3-4ada-ad7c-83caadf5daeb}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{a2e6adbf-67f1-46c4-89ee-cf702ce1628d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{1a7ca2f3-0fe9-492b-9e95-60f9f36a2a46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{853f27d0-a177-429e-b63a-5501891b9c56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{b93a2450-857a-43d6-920d-39be0bb29067}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders\particles">
+      <UniqueIdentifier>{2c14098c-a686-4e21-ac0b-37b7680fbe0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CLInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </CLInclude>
+    <ResourceCompile Include="demo.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+    <ClInclude Include="include\audio.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\options.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="directx.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="tausta.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\shaders\desert.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\globals.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\post.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="ideas.txt" />
+    <None Include="data\shaders\gs.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\scale.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\vs.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\demo.oga">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="data\shaders\HorizontalBlurCS.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\VerticalBlurCS.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\constantbuffer.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\fxaa.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="data\shaders\Gravity.hlsl">
+      <Filter>Data\Shaders\particles</Filter>
+    </None>
+    <None Include="data\shaders\ParticleDraw.hlsl">
+      <Filter>Data\Shaders\particles</Filter>
+    </None>
+    <None Include="data\shaders\desert2.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\audio.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demo.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imageLoader.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\options.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaderLoader.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fileUtil.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\particle.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
