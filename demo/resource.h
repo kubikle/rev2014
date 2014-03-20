@@ -6,13 +6,9 @@
 #define IDD_TUTORIAL1_DIALOG            102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
-#define IDM_ABOUT                       104
-#define IDM_EXIT                        105
-#define IDI_TUTORIAL1                   107
 #define IDI_SMALL                       108
 #define IDC_TUTORIAL1                   109
 #define IDR_MAINFRAME                   128
-#define IDB_TAUSTA                      131
 #define IDC_FULLSCREEN                  1000
 #define IDC_RESOLUTION                  1002
 #define IDC_ASPECTRATIO                 1003

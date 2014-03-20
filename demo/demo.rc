@@ -23,62 +23,22 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_TUTORIAL1           ICON                    "directx.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDC_TUTORIAL1 MENU
-BEGIN
-    POPUP "&File"
-    BEGIN
-        MENUITEM "E&xit",                       IDM_EXIT
-    END
-    POPUP "&Help"
-    BEGIN
-        MENUITEM "&About ...",                  IDM_ABOUT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDC_TUTORIAL1 ACCELERATORS
-BEGIN
-    "?",            IDM_ABOUT,              ASCII,  ALT
-    "/",            IDM_ABOUT,              ASCII,  ALT
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 22, 17, 140, 128
+IDD_ABOUTBOX DIALOGEX 22, 17, 76, 128
 STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Cubicle"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "Demo",IDOK,72,108,60,12,WS_GROUP
-    COMBOBOX        IDC_RESOLUTION,73,15,60,267,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_QUALITY,72,39,60,123,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "fullscreen",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,84,78,42,10
-    LTEXT           "resolution",IDC_STATIC,72,6,60,8,0,WS_EX_RIGHT
-    COMBOBOX        IDC_ASPECTRATIO,72,63,60,183,CBS_DROPDOWN | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "aspect ratio",IDC_STATIC,72,54,60,8,0,WS_EX_RIGHT
-    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP | SS_CENTERIMAGE,0,0,60,128
-    LTEXT           "quality",IDC_STATIC,72,30,60,8,0,WS_EX_RIGHT
+    DEFPUSHBUTTON   "Demo",IDOK,7,110,60,12,WS_GROUP
+    COMBOBOX        IDC_RESOLUTION,9,17,60,267,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_QUALITY,7,41,60,123,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "fullscreen",IDC_FULLSCREEN,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,19,80,42,10
+    LTEXT           "resolution",IDC_STATIC,7,8,60,8,0,WS_EX_RIGHT
+    COMBOBOX        IDC_ASPECTRATIO,7,65,60,183,CBS_DROPDOWN | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "aspect ratio",IDC_STATIC,7,56,60,8,0,WS_EX_RIGHT
+    LTEXT           "quality",IDC_STATIC,7,32,60,8,0,WS_EX_RIGHT
 END
 
 
@@ -121,8 +81,8 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         MOCKUP, 0, 75, 0, 0, ".\demo.jpg"
+        LEFTMARGIN, 7
         VERTGUIDE, 6
-        VERTGUIDE, 78
         BOTTOMMARGIN, 122
         HORZGUIDE, 72
     END
@@ -138,27 +98,9 @@ END
 STRINGTABLE
 BEGIN
     IDS_APP_TITLE           "demo"
-    IDC_TUTORIAL1           "demo"
 END
 
 #endif    // English (United States) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Finnish (Finland) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FIN)
-LANGUAGE LANG_FINNISH, SUBLANG_DEFAULT
-#pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_TAUSTA              BITMAP                  "tausta.bmp"
-#endif    // Finnish (Finland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
