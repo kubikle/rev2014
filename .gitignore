@@ -6,6 +6,10 @@
 .project
 .metadata
 bin/
+Debug/
+DebugClient/
+Release/
+ReleaseClient/
 tmp/
 *.tmp
 *.bak
