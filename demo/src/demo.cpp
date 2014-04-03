@@ -59,7 +59,7 @@ ID3D11SamplerState*         g_pSamplerLinear, *g_pSamplerPoint;
 extern HRESULT CreateParticleResources();
 extern void LoadShaders();
 extern void Quit(LPCTSTR lpText);
-extern void FrameRenderParticles(double row);
+extern void FrameRenderParticles(double row, ID3D11ShaderResourceView* inputSRV);
 extern HRESULT CreateParticleResources();
 extern ID3D11InputLayout* g_pParticleVertexLayout;
  
@@ -660,19 +660,17 @@ void Render(double row)
 	//g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBuffer, NULL);
 	g_pImmediateContext->IASetInputLayout( g_pParticleVertexLayout );
 	
-	ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-	g_pImmediateContext->VSSetShaderResources( 0, 1, ppSRVNULL );
-	g_pImmediateContext->PSSetShaderResources( 0, 1, ppSRVNULL );
-
+	ID3D11ShaderResourceView* srvNullView[1] = { NULL };
+	g_pImmediateContext->VSSetShaderResources( 0, 1, srvNullView );
+	g_pImmediateContext->PSSetShaderResources( 0, 1, srvNullView );
 	g_pImmediateContext->GSSetShader( NULL, NULL, 0 );
 
 	SetConstants(row);	
 	SetSamplers();
 	g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
-	ID3D11ShaderResourceView* srvNullView[1] = { NULL };
 	Raymarch(row);
 
-	g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
+	//g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
 	g_pImmediateContext->GSSetShader(g_pGeometryShader[0], NULL, 0);
 
 	RenderFxaa(rm.shaderResourceView);
@@ -688,17 +686,13 @@ void Render(double row)
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
 	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
 	
-	FrameRenderParticles(row);
+	FrameRenderParticles(row, post.shaderResourceView);
 
 	SetConstants(row);	
 	SetSamplers();
 
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
 	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
-
-
-	g_pImmediateContext->VSSetShaderResources( 0, 1, ppSRVNULL );
-	g_pImmediateContext->PSSetShaderResources( 0, 1, ppSRVNULL );
 
 
 	g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);

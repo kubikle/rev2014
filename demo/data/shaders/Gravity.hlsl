@@ -6,11 +6,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
+
+SamplerState samLinear : register( s1 );
+
 static float softeningSquared = 0.0012500000*0.0012500000;
 static float g_fG = 6.67300e-11f * 10000.0f;
 static float g_fParticleMass = g_fG*10000.0f * 10000.0f;
 
-#define blocksize 256
+#define blocksize 512
 groupshared float4 sharedPos[blocksize];
 
 cbuffer cbCS : register( b0 )
@@ -30,7 +33,8 @@ struct PosVelo
 	float  timeToLive;
 };
 
-StructuredBuffer<PosVelo> oldPosVelo;
+StructuredBuffer<PosVelo> oldPosVelo : register (t0);
+Texture2D gInput : register (t1);
 RWStructuredBuffer<PosVelo> newPosVelo;
 
 static float PI = acos(-1);
@@ -90,6 +94,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
     {
 		float4 pos = oldPosVelo[DTid.x].pos;
 		float4 vel = oldPosVelo[DTid.x].velo;
+		float4 color = oldPosVelo[DTid.x].color;
 	
 		float timeToLive = oldPosVelo[DTid.x].timeToLive;
 		//timeToLive = 0;
@@ -102,8 +107,11 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 
 		if(timeToLive < 0) 
 		{
-			//timeToLive = perlin(float3(x,y,g_paramf.x))*100;
-			//pos.xyz = float3(x,y,0)*800.0-400.0;
+			color = gInput[int2(x*1280/4*3, y*720/4*3)];
+			//color = 0;			
+			pos.xyz = float3((x-.5)*9,(y-.5)*4.5,0)*100.0;
+			timeToLive = 1+(perlin(float3(pos.xyz)+g_paramf.x))*3;
+			//pos.w = 10000.0 * 10000.0;
 		}
 	
 		float3 accel = 0;
@@ -112,13 +120,13 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		//pos.xyz += (perlin(pos.xyz))*.1;
 
 		//pos.x+=.1;
-		pos.x += perlin(float3(pos.xyz*100)+g_paramf.x);
+		pos.xyz += (perlin(float3(pos.xyz/1000)+time))/10;
 		
 		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
         newPosVelo[DTid.x].pos = pos;
         newPosVelo[DTid.x].velo = float4(vel.xyz, length(accel));
 		newPosVelo[DTid.x].timeToLive = timeToLive;
-		newPosVelo[DTid.x].color = float4(1, 0, 1, .1);
+		newPosVelo[DTid.x].color = color;
     }
 }

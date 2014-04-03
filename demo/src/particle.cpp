@@ -12,7 +12,7 @@
 #include "../include/options.h"
 #include "../../rocket-code/sync/sync.h"
 
-#define PARTICLE_LENGTH 256
+#define PARTICLE_LENGTH 512
 #define MAX_PARTICLES PARTICLE_LENGTH*PARTICLE_LENGTH         // the number of particles in the n-body simulation
 
 typedef struct{
@@ -264,15 +264,15 @@ HRESULT CreateParticlePosVeloBuffers()
 }
 
 
-void MoveParticles(double row)
+void MoveParticles(double row, ID3D11ShaderResourceView* inputSRV)
 {
     HRESULT hr;
     
         g_pImmediateContext->CSSetShader( g_pComputeShaders[g_positionMap["Gravity.hlsl:CSMain:cs_5_0"]-1], NULL, 0 );
 
         // For CS input            
-        ID3D11ShaderResourceView* aRViews[ 1 ] = { g_pParticlePosVeloRV0 };
-        g_pImmediateContext->CSSetShaderResources( 0, 1, aRViews );
+        ID3D11ShaderResourceView* aRViews[ 2 ] = { g_pParticlePosVeloRV0, inputSRV };
+        g_pImmediateContext->CSSetShaderResources( 0, 2, aRViews );
 
         // For CS output
         ID3D11UnorderedAccessView* aUAViews[ 1 ] = { g_pParticlePosVeloUAV1 };
@@ -299,8 +299,8 @@ void MoveParticles(double row)
         // Unbind resources for CS
         ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
         g_pImmediateContext->CSSetUnorderedAccessViews( 0, 1, ppUAViewNULL, (UINT*)(&aUAViews) );
-        ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-        g_pImmediateContext->CSSetShaderResources( 0, 1, ppSRVNULL );
+        ID3D11ShaderResourceView* ppSRVNULL[2] = { NULL, NULL };
+        g_pImmediateContext->CSSetShaderResources( 0, 2, ppSRVNULL );
 
         //g_pImmediateContext->CSSetShader( NULL, NULL, 0 );
 
@@ -366,10 +366,13 @@ bool RenderParticles()
     return true;
 }
 
-void FrameRenderParticles(double row)
+void FrameRenderParticles(double row, ID3D11ShaderResourceView* inputSRV)
 {
-	MoveParticles(row);
+	//ID3D11ShaderResourceView* shaderResourceViews[] = { inputSRV };
+	//g_pImmediateContext->CSSetShaderResources(0, 1, shaderResourceViews);
+	MoveParticles(row, inputSRV);
 
+	
     float ClearColor[4] = { 0, 0, 0, 0.0 };
     
 	g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0 );

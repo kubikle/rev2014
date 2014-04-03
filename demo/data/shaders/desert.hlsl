@@ -32,14 +32,14 @@ float intersect( float3 p, out float materialID )
 	
 	
 	float3 op = p;
-	p.y = fmod(abs(p.y),16)-8;
+	//p.y = fmod(abs(p.y),16)-8;
 	if(p.z > 0) {
 		//p.z = fmod(abs(p.z),16)-4;
 	}
 	//tmpDist = rotBox(p,8,1, beat/10);
 	//tmpDist = min(tmpDist, rotBox(p,16,2, beat/5));
 
-	float3 s = float3(2000,.1,.1);
+	float3 s = float3(200,100,.1);
 	tmpDist = udRoundBox(p,s,s.z/10);
 	
 
