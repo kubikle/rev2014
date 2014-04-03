@@ -6,6 +6,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
+static float PI = acos(-1);
+
 struct VSParticleIn
 {
     float4  color   : COLOR;
@@ -127,5 +129,6 @@ void GSParticleDraw(point VSParticleDrawOut input[1], inout TriangleStream<GSPar
 float4 PSParticleDraw(PSParticleDrawIn input) : SV_Target
 {       
     //return float4(.1,.1,.1,0.2);//*float4(input.tex,1,1);
-	return input.color;
+	float diffuse = (sin(input.tex.x*PI)*sin(input.tex.y*PI))*2;
+	return input.color*diffuse;
 }

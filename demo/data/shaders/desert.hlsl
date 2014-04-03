@@ -27,31 +27,56 @@ float intersect( float3 p, out float materialID )
 { 
 	//p.zy = R(p.zy,p.x);
 	
-	float dist = 500.0f;
-	float tmpDist = 500.0f;
-	
-	
-	float3 op = p;
-	//p.y = fmod(abs(p.y),16)-8;
-	if(p.z > 0) {
-		//p.z = fmod(abs(p.z),16)-4;
+	float dist = 1000.0f;
+	float tmpDist = 600.0f;
+	dist = p.y+synk5;
+	tmpDist = -p.y+synk5;
+	if(tmpDist < dist) {
+		dist = tmpDist;
 	}
-	//tmpDist = rotBox(p,8,1, beat/10);
-	//tmpDist = min(tmpDist, rotBox(p,16,2, beat/5));
-
-	float3 s = float3(200,100,.1);
-	tmpDist = udRoundBox(p,s,s.z/10);
 	
+	materialID = 1; 	
+	float3 op = p;
+	//p.xy = R(p.xy,p.z);
+	
+	p.z = fmod(abs(p.z),2)-1;	
+	//p.x = fmod(abs(p.x),20)-10;
+	p.yz = R(p.yz,PI/2);
+	if(synk1==2)
+		tmpDist = sdTorusN( p, float2(5+cos(op.z/5+beat/10)*2+sin(op.z/5+beat/10), .4),2);
+	if(synk1==4)
+		tmpDist = sdTorusN( p, float2(5+cos(op.z/5+beat/10)*2+sin(op.z/5+beat/10), .3),4);
+	if(synk1==8)
+		tmpDist = sdTorusN( p, float2(5+cos(op.z/5+beat/10)*2+sin(op.z/5+beat/10), .2),8);
+
+	p=op;	
+	
+	if(synk1==10) {
+		p.y = fmod(abs(p.y),16)-4;
+		tmpDist = rotBox(p,8,1, beat/10);
+		tmpDist = min(tmpDist, rotBox(p,16,2, beat/5));
+	}
 
 
 	p=op;	
 	
 	if(tmpDist < dist) {
-		tmpDist +=fbm2(p,beat/20)/10;
+		materialID = 2;
 		dist = tmpDist;
-		materialID = 1; 	
 	}
 
+	if(castShadow) {
+		//float tmpDist2 = udRoundBox(p, float3(20+(sin(p.z/2-beat))+(cos(p.z*4-beat))/10,15+(sin(p.z/2-beat))+(cos(p.z*4-beat))/10,50000),4);
+		p.yz = R(p.yz,PI/2);
+		float tmpDist2 = sdCylinder(p, float3(0,0,synk6));
+		tmpDist2+=abs(fbm2(p/28,beat/32)*16);//+sin(p.x/5+beat/2)+cos(p.z/8+beat/3)+cos(p.y/2+beat/4);
+
+		if(-tmpDist2<dist) {
+			materialID = 3; 			
+			dist = -tmpDist2;		
+	
+		}
+	}
 	return dist;
 }
 
@@ -65,10 +90,10 @@ float4 main(float2 uv) : COLOR
 	//sphere1.z = 0.5+sin(beat);
 
 	float2 originalUV = uv;
-	float3 rd = {(-1+2*uv)*float2(ASPECT,1), camFov < .1 ? .1 : camFov};
+	float3 rd = {(-1+2*uv)*float2(2.25,1), camFov < .01 ? .01 : camFov};
 	
 	
-	float3 ro = {synk2,synk3,synk4};
+	float3 ro = {synk2,synk3,beat*synk4};
 	
 	rd.yz = R(rd.yz,camRot.x);
 	rd.xz = R(rd.xz,camRot.y);
@@ -78,19 +103,16 @@ float4 main(float2 uv) : COLOR
 
 	float3 rayPosition = ro + rd;
 
-	float3 color = 0;
+	float3 color = 1;
 	float id= 0;
 	float steps;
 	float volumeFog;
 	//ray march
-	float dist = rm(rayPosition, rd,.25, 200, id, steps, volumeFog); 
+	float dist = rm(rayPosition, rd,.25, 400, id, steps, volumeFog); 
 	//if(id==4) color=.1;
-	//dist += pow(perlin(float3(rayPosition.x*10, 0, 0)),2)*20;
-	if(id==1) color = float3(244.,238.,180.)/255.;
-	//color += steps/200;
-	color -= 200/steps/20;
-	//if(id==1) color = float3(66.,84.,84.)/255.;
-	
+	dist += pow(perlin(float3(rayPosition.x*10, 0, 0)),2)*20;
+	color = pow((dist/300)*float3(.7,.4,.2),2);
+	color += saturate((float3(.1,.7,1)*steps/100)/(dist/10));
 	return float4(color,1); 
 }
 

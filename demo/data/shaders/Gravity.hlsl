@@ -108,9 +108,10 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		if(timeToLive < 0) 
 		{
 			color = gInput[int2(x*1280/4*3, y*720/4*3)];
+			//color = saturate(color);
 			//color = 0;			
-			pos.xyz = float3((x-.5)*9,(y-.5)*4.5,0)*100.0;
-			timeToLive = 1+(perlin(float3(pos.xyz)+g_paramf.x))*3;
+			pos.xyz = float3((x-.5)*9,(y-.5)*4.5,0)*110.0;
+			timeToLive = (perlin(float3(pos.xyz)+g_paramf.x))*10;
 			//pos.w = 10000.0 * 10000.0;
 		}
 	
@@ -120,8 +121,12 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		//pos.xyz += (perlin(pos.xyz))*.1;
 
 		//pos.x+=.1;
-		pos.xyz += (perlin(float3(pos.xyz/1000)+time))/10;
-		
+		//pos.xyz += (perlin(float3(pos.xyz/100)+time));
+		//pos.z += (sin(x*5+time)*10+cos(y*10+time*2)*20)/10;
+		//pos.z = saturate(pos.z)*10;
+
+		pos.xyz = length(pos.xyz) > 400 ? normalize(pos.xyz)*450 : pos.xyz;
+
 		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
         newPosVelo[DTid.x].pos = pos;
