@@ -39,9 +39,6 @@
     <None Include="directx.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="tausta.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="data\shaders\desert.hlsl">
       <Filter>Data\Shaders</Filter>
     </None>
@@ -51,7 +48,6 @@
     <None Include="data\shaders\post.hlsl">
       <Filter>Data\Shaders</Filter>
     </None>
-    <None Include="ideas.txt" />
     <None Include="data\shaders\gs.hlsl">
       <Filter>Data\Shaders</Filter>
     </None>
@@ -60,9 +56,6 @@
     </None>
     <None Include="data\shaders\vs.hlsl">
       <Filter>Data\Shaders</Filter>
-    </None>
-    <None Include="data\demo.oga">
-      <Filter>Data</Filter>
     </None>
     <None Include="data\shaders\HorizontalBlurCS.hlsl">
       <Filter>Data\Shaders</Filter>

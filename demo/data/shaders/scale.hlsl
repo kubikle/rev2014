@@ -33,22 +33,22 @@ float4 Scale(BufferStruct i) : SV_Target
 	color = txBloom.Sample( samPoint, i.uv);
 	
 	//return color;
-	if(imageFade > 1) {
-		float ifade = imageFade;
-		ifade = saturate(ifade - 2);
-		color.xyz *= color.a;
-		i.color = color*(ifade)+i.color*(1-color.a*ifade)+i.color*(1-ifade);
-
-		return i.color*fade;
-	} else {
-		i.color = abs((color*imageFade)-i.color);
-	}
+	//if(imageFade > 1) {
+		//float ifade = imageFade;
+		//ifade = saturate(ifade - 2);
+		//color.xyz *= color.a;
+		//i.color = color*(ifade)+i.color*(1-color.a*ifade)+i.color*(1-ifade);
+//
+		//return i.color*fade;
+	//} else {
+		//i.color = abs((color*imageFade)-i.color);
+	//}
 	//return i.color;
-	float c0 = dot(i.color.xyz,float3(.33,.33,.33));
-	c0 -= synk8/10;
-	c0 *= synk9;
-	c0 = saturate(c0);
-	return float4(c0,c0,c0,1)*fade;
+	//float c0 = dot(i.color.xyz,float3(.33,.33,.33));
+	//c0 -= synk8/10;
+	//c0 *= synk9;
+	//c0 = saturate(c0);
+	return color*10;
 
 	//return color*imageFade;
 }

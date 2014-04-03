@@ -557,7 +557,6 @@
     <ResourceCompile Include="demo.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\demo.oga" />
     <None Include="data\shaders\constantbuffer.hlsl" />
     <None Include="data\shaders\desert.hlsl" />
     <None Include="data\shaders\desert2.hlsl" />
@@ -572,8 +571,6 @@
     <None Include="data\shaders\VerticalBlurCS.hlsl" />
     <None Include="data\shaders\vs.hlsl" />
     <None Include="directx.ico" />
-    <None Include="ideas.txt" />
-    <None Include="tausta.bmp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

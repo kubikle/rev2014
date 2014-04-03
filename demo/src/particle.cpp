@@ -12,7 +12,8 @@
 #include "../include/options.h"
 #include "../../rocket-code/sync/sync.h"
 
-#define MAX_PARTICLES 200000         // the number of particles in the n-body simulation
+#define PARTICLE_LENGTH 256
+#define MAX_PARTICLES PARTICLE_LENGTH*PARTICLE_LENGTH         // the number of particles in the n-body simulation
 
 typedef struct{
 	ID3D11Texture2D*		   texture;
@@ -150,7 +151,7 @@ void LoadParticles( PARTICLE* pParticles,
 
         pParticles[i].velo = Velocity;
 
-		pParticles[i].timeToLive = 10;
+		pParticles[i].timeToLive = 1;
     }    
 }
 
@@ -263,13 +264,10 @@ HRESULT CreateParticlePosVeloBuffers()
 }
 
 
-void MoveParticles( double row)
+void MoveParticles(double row)
 {
     HRESULT hr;
-
-    int dimx = int(ceil(MAX_PARTICLES/256.0f));
     
-    {
         g_pImmediateContext->CSSetShader( g_pComputeShaders[g_positionMap["Gravity.hlsl:CSMain:cs_5_0"]-1], NULL, 0 );
 
         // For CS input            
@@ -288,15 +286,15 @@ void MoveParticles( double row)
 		}
         CB_CS* pcbCS = ( CB_CS* )MappedResource.pData;
         pcbCS->param[0] = MAX_PARTICLES;
-        pcbCS->param[1] = dimx;      
-        pcbCS->paramf[0] = 0.1f;
+        pcbCS->param[1] = PARTICLE_LENGTH;      
+        pcbCS->paramf[0] = row;
         pcbCS->paramf[1] = 1;
         g_pImmediateContext->Unmap( g_pcbCS, 0 );
         ID3D11Buffer* ppCB[1] = { g_pcbCS };
         g_pImmediateContext->CSSetConstantBuffers( 0, 1, ppCB );
 
         // Run the CS
-        g_pImmediateContext->Dispatch( dimx, 1, 1 );
+        g_pImmediateContext->Dispatch( PARTICLE_LENGTH, 1, 1 );
 
         // Unbind resources for CS
         ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
@@ -309,7 +307,6 @@ void MoveParticles( double row)
         SWAP( g_pParticlePosVelo0, g_pParticlePosVelo1 );
         SWAP( g_pParticlePosVeloRV0, g_pParticlePosVeloRV1 );
         SWAP( g_pParticlePosVeloUAV0, g_pParticlePosVeloUAV1 );
-    }
 
 }
 
@@ -358,16 +355,13 @@ bool RenderParticles()
 
     g_pImmediateContext->Draw( MAX_PARTICLES, 0 );
 
-    ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-    g_pImmediateContext->VSSetShaderResources( 0, 1, ppSRVNULL );
-    g_pImmediateContext->PSSetShaderResources( 0, 1, ppSRVNULL );
+	ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
+	g_pImmediateContext->VSSetShaderResources( 0, 1, ppSRVNULL );
+	g_pImmediateContext->PSSetShaderResources( 0, 1, ppSRVNULL );
 
-    /*ID3D11Buffer* ppBufNULL[1] = { NULL };
-    g_pImmediateContext->GSSetConstantBuffers( 0, 1, ppBufNULL );*/
-
-    g_pImmediateContext->GSSetShader( NULL, NULL, 0 );
-    g_pImmediateContext->OMSetBlendState( pBlendState0, &BlendFactor0.x, SampleMask0 ); SAFE_RELEASE(pBlendState0);
-    g_pImmediateContext->OMSetDepthStencilState( pDepthStencilState0, StencilRef0 ); SAFE_RELEASE(pDepthStencilState0);
+	g_pImmediateContext->GSSetShader( NULL, NULL, 0 );
+	g_pImmediateContext->OMSetBlendState( pBlendState0, &BlendFactor0.x, SampleMask0 ); SAFE_RELEASE(pBlendState0);
+	g_pImmediateContext->OMSetDepthStencilState( pDepthStencilState0, StencilRef0 ); SAFE_RELEASE(pDepthStencilState0);
 
     return true;
 }
@@ -388,14 +382,20 @@ void FrameRenderParticles(double row)
 	
 	g_World = XMMatrixIdentity();
 
-	g_Projection = XMMatrixPerspectiveFovLH( (float)sync_get_val(g_syncTracks.camFov, row), g_options.dWidth / g_options.dHeight, 0.1f, 1000.0f);
+//	float camFov = (float)sync_get_val(g_syncTracks.camFov, row);
+	float camFov = 1.0f;
+	if(camFov < 0.1) {
+		camFov = 0.1;
+	}
 
-	XMVECTOR Eye = XMVectorSet( 0.0f, 0.0f, -8.0f, 0.0f );
+	g_Projection = XMMatrixPerspectiveFovLH(camFov , g_options.iWidth / g_options.iHeight, 0.1f, 1000.0f);
+
+	XMVECTOR Eye = XMVectorSet( 0.0f, 0.0f, -500.0f, 0.0f );
 	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up );
 	
-    // Render the particles
+     // Render the particles
     RenderParticles();
 }
 

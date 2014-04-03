@@ -42,6 +42,7 @@ extern double GetAudioRow();
 extern void InitOptions();
 extern void LoadShaders();
 extern void DemoInit();
+extern void PlayMusic();
 
 
 HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow );
@@ -63,8 +64,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	g_options.bpp = 32;
 	g_options.dWidth = 1280;
 	g_options.dHeight = 1280/16*9;
-	g_options.iWidth = 1280/4;
-	g_options.iHeight = 720/4;
+	g_options.iWidth = 1280/4*3;
+	g_options.iHeight = 720/4*3;
 	g_options.offsetX = 0;
 	g_options.offsetY = 0;
 	g_options.sWidth = 0;
@@ -88,13 +89,11 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 	CalculateScreenSize();
 
-
 	SetWindowPos(g_hWnd, NULL, 0, 0, g_options.dWidth, g_options.dHeight, NULL);
 	ShowWindow( g_hWnd, nCmdShow );
 
     if( FAILED( InitDevice() ) )
     {
-        CleanupDevice();
 		Quit("Failed to initialize device");
     }
 	
@@ -110,10 +109,11 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	ShowCursor(FALSE);
 #endif
 
+	InitAudio();
 	LoadShaders();
 	DemoInit();
-	InitAudio();
-	
+
+	PlayMusic();
     // Main message loop
     MSG msg = {0};
 #ifndef SYNC_PLAYER
@@ -213,6 +213,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
         case WM_DESTROY:
             PostQuitMessage( 0 );
+			CleanupDevice();
             return 0;
     }
 
@@ -220,12 +221,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 	return DefWindowProc( hWnd, message, wParam, lParam );
 }
 
-void Quit(LPCTSTR lpText) 
-{
-	CleanupDevice();
-	MessageBox(NULL, lpText, NULL, MB_OK | MB_ICONERROR);
-	exit(EXIT_FAILURE);
-}
 
 
 
@@ -346,12 +341,49 @@ HRESULT InitDevice()
 //--------------------------------------------------------------------------------------
 // Clean up the objects we've created
 //--------------------------------------------------------------------------------------
+void ShutdownWindows()
+{
+	// Show the mouse cursor.
+	ShowCursor(true);
+
+	// Fix the display settings if leaving full screen mode.
+	if(g_options.fullscreen)
+	{
+		ChangeDisplaySettings(NULL, 0);
+	}
+
+	// Remove the window.
+	DestroyWindow(g_hWnd);
+	g_hWnd = NULL;
+
+	return;
+}
+
 void CleanupDevice()
 {
-    if( g_pImmediateContext ) g_pImmediateContext->ClearState();
+	ShutdownWindows();
+	if( g_pImmediateContext ) g_pImmediateContext->ClearState();
 
-    if( g_pBackBuffer ) g_pBackBuffer->Release();
-    if( g_pSwapChain ) g_pSwapChain->Release();
-    if( g_pImmediateContext ) g_pImmediateContext->Release();
-    if( g_pd3dDevice ) g_pd3dDevice->Release();
+	if( g_pBackBuffer ) g_pBackBuffer->Release();
+	if( g_pSwapChain ) g_pSwapChain->Release();
+	if( g_pImmediateContext ) g_pImmediateContext->Release();
+	if( g_pd3dDevice ) g_pd3dDevice->Release();
+
+#ifdef _DEBUG 
+	ID3D11Debug *debugDev;
+	g_pd3dDevice->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debugDev));
+	debugDev->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+
+#endif
+
+}
+
+
+void Quit(LPCTSTR lpText) 
+{
+
+	MessageBox(g_hWnd, lpText, NULL, MB_OK | MB_ICONERROR);
+	CleanupDevice();
+
+	exit(EXIT_FAILURE);
 }

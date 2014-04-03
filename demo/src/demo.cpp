@@ -61,6 +61,7 @@ extern void LoadShaders();
 extern void Quit(LPCTSTR lpText);
 extern void FrameRenderParticles(double row);
 extern HRESULT CreateParticleResources();
+extern ID3D11InputLayout* g_pParticleVertexLayout;
  
 void Render(double row);
 
@@ -364,6 +365,7 @@ void DemoInit()
 
 	//g_pImmediateContext->IASetVertexBuffers(0, 0, NULL, NULL, NULL);
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	g_pImmediateContext->IASetInputLayout( g_pParticleVertexLayout );
 }
 
 void SetConstants( double row)
@@ -417,7 +419,7 @@ void RenderToScreen(double row, ID3D11ShaderResourceView *viewToRender, ID3D11Sh
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBuffer, NULL);
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &viewToRender );
 	//g_pImmediateContext->PSSetShaderResources( 1, 1, &viewToRender2);
-	g_pImmediateContext->PSSetShaderResources( 1, 1, &g_pImages[imageId % g_pImages.size()] );
+	g_pImmediateContext->PSSetShaderResources( 1, 1, &viewToRender2 );
 	g_pImmediateContext->PSSetShader(g_pPixelShaders[3], NULL, 0);
 	g_pImmediateContext->Draw(1, 0);
 }
@@ -656,13 +658,17 @@ void Render(double row)
 	SetViewPortToInternal();
 	//SetViewPortToScreenSize();
 	//g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBuffer, NULL);
-	FrameRenderParticles(row);
+	g_pImmediateContext->IASetInputLayout( g_pParticleVertexLayout );
+	
+	ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
+	g_pImmediateContext->VSSetShaderResources( 0, 1, ppSRVNULL );
+	g_pImmediateContext->PSSetShaderResources( 0, 1, ppSRVNULL );
 
+	g_pImmediateContext->GSSetShader( NULL, NULL, 0 );
 
 	SetConstants(row);	
 	SetSamplers();
-
-
+	g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
 	ID3D11ShaderResourceView* srvNullView[1] = { NULL };
 	Raymarch(row);
 
@@ -678,6 +684,25 @@ void Render(double row)
 
 	g_pImmediateContext->OMSetRenderTargets(1, &blurH.renderTargetView, NULL);
 	Blur(post.shaderResourceView, post.unorderedAccessView, (UINT)sync_get_val(g_syncTracks.blur, row));
+	
+	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
+	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
+	
+	FrameRenderParticles(row);
+
+	SetConstants(row);	
+	SetSamplers();
+
+	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
+	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
+
+
+	g_pImmediateContext->VSSetShaderResources( 0, 1, ppSRVNULL );
+	g_pImmediateContext->PSSetShaderResources( 0, 1, ppSRVNULL );
+
+
+	g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
+	g_pImmediateContext->GSSetShader(g_pGeometryShader[0], NULL, 0);
 
 	SetViewPortToScreenSize();
 	RenderToScreen( row, post.shaderResourceView, particle.shaderResourceView);
@@ -690,7 +715,4 @@ void Render(double row)
 
 		D3DX11SaveTextureToFile(g_pImmediateContext, bbRes,D3DX11_IFF_PNG,filename);
 	}
-
-	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
-	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
 }

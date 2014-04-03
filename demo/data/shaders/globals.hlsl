@@ -24,6 +24,7 @@ struct Data {
 //]
 static float PI = acos(-1);
 static int castShadow = 1;
+static float ASPECT = 1.7777;
 
 // For Gradient we need g_data as output
 //[

@@ -136,6 +136,14 @@ void GetTracks()
 	g_syncTracks.imageFade = sync_get_track(rocket, "imageFade");
 }
 
+void PlayMusic() 
+{
+	if(!g_options.saveImages) {
+		BASS_Start();
+		BASS_ChannelPlay(stream, false);
+	}
+}
+
 
 void InitAudio() {
 	/* init BASS */
@@ -161,11 +169,6 @@ void InitAudio() {
 #endif
 
 	GetTracks();
-
-	if(!g_options.saveImages) {
-		BASS_Start();
-		BASS_ChannelPlay(stream, false);
-	}
 }
 
 double GetAudioRow() {

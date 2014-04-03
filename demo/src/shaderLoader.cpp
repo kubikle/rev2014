@@ -165,18 +165,18 @@ void LoadShaders()
 	if(IsFileModified(shaderPath + "desert.hlsl")) {
 		LoadShader("desert.hlsl", "Checkers", "cs_5_0");
 	}
-	if(IsFileModified(shaderPath + "desert2.hlsl")) {
-		LoadShader("desert2.hlsl", "Checkers", "cs_5_0");
-	}
-	if(IsFileModified(shaderPath + "desert3.hlsl")) {
-		LoadShader("desert3.hlsl", "Checkers", "cs_5_0");
-	}
-	if(IsFileModified(shaderPath + "desert4.hlsl")) {
-		LoadShader("desert4.hlsl", "Checkers", "cs_5_0");
-	}
-	if(IsFileModified(shaderPath + "desert5.hlsl")) {
-		LoadShader("desert5.hlsl", "Checkers", "cs_5_0");
-	}
+	//if(IsFileModified(shaderPath + "desert2.hlsl")) {
+	//	LoadShader("desert2.hlsl", "Checkers", "cs_5_0");
+	//}
+	//if(IsFileModified(shaderPath + "desert3.hlsl")) {
+	//	LoadShader("desert3.hlsl", "Checkers", "cs_5_0");
+	//}
+	//if(IsFileModified(shaderPath + "desert4.hlsl")) {
+	//	LoadShader("desert4.hlsl", "Checkers", "cs_5_0");
+	//}
+	//if(IsFileModified(shaderPath + "desert5.hlsl")) {
+	//	LoadShader("desert5.hlsl", "Checkers", "cs_5_0");
+	//}
 	if(IsFileModified(shaderPath + "vs.hlsl")) {
 		LoadShader("vs.hlsl", "VS","vs_5_0");
 	}

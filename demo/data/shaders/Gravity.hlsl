@@ -86,35 +86,39 @@ float perlin(float3 p) {
 void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID, uint GI : SV_GroupIndex )
 {
     // Each thread of the CS updates one of the particles
-
-
-
-    float4 pos = oldPosVelo[DTid.x].pos;
-    float4 vel = oldPosVelo[DTid.x].velo;
-	
-    float timeToLive = oldPosVelo[DTid.x].timeToLive;
-	timeToLive -=0.1;
-	newPosVelo[DTid.x].timeToLive = timeToLive;
-	if(timeToLive < 0) 
-	{
-		//pos.x = ((float)DTid.x/(float)g_param.x)*20.0-10.0;
-		//pos.x = ((float)DTid.x /blocksize) % 20;
-		//newPosVelo[DTid.x].timeToLive = 10;
-	}
-	
-    float3 accel = 0;
-    float mass = g_fParticleMass;
-	
-	//pos.xyz += (perlin(pos.xyz))*.1;
-
-    if ( DTid.x < g_param.x )
+	if ( (float)DTid.x < (float)g_param.x )
     {
-		pos.xyz = normalize(pos.xyz);
-		if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
+		float4 pos = oldPosVelo[DTid.x].pos;
+		float4 vel = oldPosVelo[DTid.x].velo;
+	
+		float timeToLive = oldPosVelo[DTid.x].timeToLive;
+		//timeToLive = 0;
+		timeToLive -=.1;
+		
+		float time = g_paramf.x/40;
+		float x = ((float)DTid.x%(float)g_param.y)/(float)g_param.y;
+		float y = (floor((float)DTid.x/(float)g_param.y))/(float)g_param.y;
+		
+
+		if(timeToLive < 0) 
+		{
+			//timeToLive = perlin(float3(x,y,g_paramf.x))*100;
+			//pos.xyz = float3(x,y,0)*800.0-400.0;
+		}
+	
+		float3 accel = 0;
+		float mass = g_fParticleMass;
+	
+		//pos.xyz += (perlin(pos.xyz))*.1;
+
+		//pos.x+=.1;
+		pos.x += perlin(float3(pos.xyz*100)+g_paramf.x);
+		
+		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
         newPosVelo[DTid.x].pos = pos;
         newPosVelo[DTid.x].velo = float4(vel.xyz, length(accel));
-		
+		newPosVelo[DTid.x].timeToLive = timeToLive;
 		newPosVelo[DTid.x].color = float4(1, 0, 1, .1);
     }
 }
