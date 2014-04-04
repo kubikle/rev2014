@@ -59,7 +59,7 @@ ID3D11SamplerState*         g_pSamplerLinear, *g_pSamplerPoint;
 extern HRESULT CreateParticleResources();
 extern void LoadShaders();
 extern void Quit(LPCTSTR lpText);
-extern void FrameRenderParticles(double row, ID3D11ShaderResourceView* inputSRV);
+extern void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV);
 extern HRESULT CreateParticleResources();
 extern ID3D11InputLayout* g_pParticleVertexLayout;
  
@@ -648,7 +648,7 @@ int frame = 0;
 char filename[256];
 ID3D11Resource  *bbRes;
 
-void Render(double row)
+void Render(double row, double delta)
 {
 	
 #ifndef SYNC_PLAYER
@@ -686,7 +686,7 @@ void Render(double row)
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
 	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
 	
-	FrameRenderParticles(row, post.shaderResourceView);
+	FrameRenderParticles(row, delta, post.shaderResourceView);
 
 	SetConstants(row);	
 	SetSamplers();

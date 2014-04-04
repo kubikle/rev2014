@@ -12,8 +12,9 @@
 #include "../include/options.h"
 #include "../../rocket-code/sync/sync.h"
 
-#define PARTICLE_LENGTH 512
-#define MAX_PARTICLES PARTICLE_LENGTH*PARTICLE_LENGTH         // the number of particles in the n-body simulation
+#define PARTICLE_X 640
+#define PARTICLE_Y 360
+#define MAX_PARTICLES PARTICLE_X*PARTICLE_Y         // the number of particles in the n-body simulation
 
 typedef struct{
 	ID3D11Texture2D*		   texture;
@@ -87,7 +88,7 @@ struct CB_GS
 struct CB_CS
 {
     UINT param[4];
-    float paramf[4];
+    float time[4];
 };
 
 #pragma pack(4)
@@ -264,7 +265,7 @@ HRESULT CreateParticlePosVeloBuffers()
 }
 
 
-void MoveParticles(double row, ID3D11ShaderResourceView* inputSRV)
+void MoveParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV)
 {
     HRESULT hr;
     
@@ -285,16 +286,18 @@ void MoveParticles(double row, ID3D11ShaderResourceView* inputSRV)
 			Quit("Failed to map particle pcbCS");
 		}
         CB_CS* pcbCS = ( CB_CS* )MappedResource.pData;
-        pcbCS->param[0] = MAX_PARTICLES;
-        pcbCS->param[1] = PARTICLE_LENGTH;      
-        pcbCS->paramf[0] = row;
-        pcbCS->paramf[1] = 1;
+        
+        pcbCS->param[0] = PARTICLE_X;    
+		pcbCS->param[1] = PARTICLE_Y;      
+		pcbCS->param[2] = MAX_PARTICLES;
+        pcbCS->time[0] = row;
+        pcbCS->time[1] = delta;
         g_pImmediateContext->Unmap( g_pcbCS, 0 );
         ID3D11Buffer* ppCB[1] = { g_pcbCS };
         g_pImmediateContext->CSSetConstantBuffers( 0, 1, ppCB );
 
         // Run the CS
-        g_pImmediateContext->Dispatch( PARTICLE_LENGTH, 1, 1 );
+        g_pImmediateContext->Dispatch( (UINT)(g_options.iWidth/32), (UINT)(g_options.iHeight/18), 1 );
 
         // Unbind resources for CS
         ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
@@ -366,11 +369,11 @@ bool RenderParticles()
     return true;
 }
 
-void FrameRenderParticles(double row, ID3D11ShaderResourceView* inputSRV)
+void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV)
 {
 	//ID3D11ShaderResourceView* shaderResourceViews[] = { inputSRV };
 	//g_pImmediateContext->CSSetShaderResources(0, 1, shaderResourceViews);
-	MoveParticles(row, inputSRV);
+	MoveParticles(row, delta, inputSRV);
 
 	
     float ClearColor[4] = { 0, 0, 0, 0.0 };

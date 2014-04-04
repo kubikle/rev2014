@@ -36,7 +36,7 @@ extern DemoOptions		g_options;
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
-extern void Render(double row);
+extern void Render(double row, double delta);
 extern void InitAudio();
 extern double GetAudioRow();
 extern void InitOptions();
@@ -126,9 +126,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		if(GetAsyncKeyState(VK_ESCAPE)) break;
 #endif
 		
-#ifdef SYNC_PLAYER
-		
-#endif
         if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
         {
             TranslateMessage( &msg );
@@ -137,15 +134,21 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
         else
         {
 			double row = GetAudioRow();
+			double delta = row - lastRow;
 			if(row > 4000) break;
 #ifndef SYNC_PLAYER
+			if(delta < 0) {
+				delta = 0;
+			}
 			if(row == lastRow) {
-				// Turha syödä kaikki resursseja jos pause päällä
+				// Turha syödä kaikki resursseja, jos pause päällä.
 				Sleep(100);
 			}
-			lastRow = row;	
+			
 #endif
-            Render(row);
+			
+			lastRow = row;
+            Render(row, delta);
         }
     }
 
