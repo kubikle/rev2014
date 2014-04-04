@@ -107,12 +107,19 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 
 		if(timeToLive < 0) 
 		{
-			color = gInput[int2(x*1280/4*3, y*720/4*3)];
-			//color = saturate(color);
-			//color = 0;			
-			pos.xyz = float3((x-.5)*9,(y-.5)*4.5,0)*110.0;
-			timeToLive = (perlin(float3(pos.xyz)+g_paramf.x))*10;
-			//pos.w = 10000.0 * 10000.0;
+			color = gInput[int2(x*1280/4*2, y*720/4*2)];
+
+			if(color.x +color.y + color.z> 0) {
+
+				//color = saturate(color);
+				//color = 0;
+				pos.xyz = float3((x-.5)*4.5,(y-.5)*4.5,0)*110.0;
+				timeToLive = (perlin(float3(pos.xyz)+g_paramf.x))*5;
+				newPosVelo[DTid.x].velo.x = timeToLive;
+				//pos.w = 10000.0 * 10000.0;
+			} else {
+				color = 0;
+			}
 		}
 	
 		float3 accel = 0;
@@ -122,16 +129,16 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 
 		//pos.x+=.1;
 		//pos.xyz += (perlin(float3(pos.xyz/100)+time));
-		//pos.z += (sin(x*5+time)*10+cos(y*10+time*2)*20)/10;
+		pos.z += (sin(x*5+time)*10+cos(y*10+time*2)*20)/1;
 		//pos.z = saturate(pos.z)*10;
 
-		pos.xyz = length(pos.xyz) > 400 ? normalize(pos.xyz)*450 : pos.xyz;
+		//pos.xyz = length(pos.xyz) > 400 ? normalize(pos.xyz)*400 : pos.xyz;
 
 		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
         newPosVelo[DTid.x].pos = pos;
-        newPosVelo[DTid.x].velo = float4(vel.xyz, length(accel));
+        //newPosVelo[DTid.x].velo = float4(vel.xyz, length(accel));
 		newPosVelo[DTid.x].timeToLive = timeToLive;
-		newPosVelo[DTid.x].color = color;
+		newPosVelo[DTid.x].color = color; //float4(color.xyz,(timeToLive/newPosVelo[DTid.x].velo.x));
     }
 }

@@ -673,12 +673,12 @@ void Render(double row)
 	//g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
 	g_pImmediateContext->GSSetShader(g_pGeometryShader[0], NULL, 0);
 
-	RenderFxaa(rm.shaderResourceView);
+	//RenderFxaa(rm.shaderResourceView);
 
 	g_pImmediateContext->OMSetRenderTargets(1, &blurH.renderTargetView, NULL);
-	Bloom(fxaa.shaderResourceView, (UINT)sync_get_val(g_syncTracks.bloom, row));
+	Bloom(rm.shaderResourceView, (UINT)sync_get_val(g_syncTracks.bloom, row));
 
-	RenderPost(fxaa.shaderResourceView);
+	RenderPost(rm.shaderResourceView);
 
 	g_pImmediateContext->OMSetRenderTargets(1, &blurH.renderTargetView, NULL);
 	Blur(post.shaderResourceView, post.unorderedAccessView, (UINT)sync_get_val(g_syncTracks.blur, row));
