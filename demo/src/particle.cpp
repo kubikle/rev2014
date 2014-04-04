@@ -42,7 +42,7 @@ extern vector<ID3D11VertexShader*>		g_pVertexShader;
 extern vector<ID3D11GeometryShader*>    g_pGeometryShader;
 extern vector<ID3D11PixelShader*>       g_pPixelShaders;
 extern map<string, int>					g_positionMap;
-extern ID3D11DepthStencilView*			g_pDepthStencilView;
+extern ID3D11DepthStencilView*			g_particleDepthStencilView;
 
 
 extern SyncTracks						g_syncTracks;
@@ -208,7 +208,7 @@ HRESULT CreateParticlePosVeloBuffers()
     if( !pData1 )
         return E_OUTOFMEMORY;    
 
-    srand( GetTickCount() );   
+    //srand( GetTickCount() );   
 
     // Disk Galaxy Formation
     LoadParticles( pData1,
@@ -287,8 +287,8 @@ void MoveParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV)
 		}
         CB_CS* pcbCS = ( CB_CS* )MappedResource.pData;
         
-        pcbCS->param[0] = PARTICLE_X;    
-		pcbCS->param[1] = PARTICLE_Y;      
+		pcbCS->param[0] = g_options.iWidth;    
+		pcbCS->param[1] = g_options.iHeight;      
 		pcbCS->param[2] = MAX_PARTICLES;
         pcbCS->time[0] = row;
         pcbCS->time[1] = delta;
@@ -297,7 +297,7 @@ void MoveParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV)
         g_pImmediateContext->CSSetConstantBuffers( 0, 1, ppCB );
 
         // Run the CS
-        g_pImmediateContext->Dispatch( (UINT)(g_options.iWidth/32), (UINT)(g_options.iHeight/18), 1 );
+		g_pImmediateContext->Dispatch( (UINT)(PARTICLE_X/32), (UINT)(PARTICLE_Y/18), 1 );
 
         // Unbind resources for CS
         ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
@@ -378,11 +378,11 @@ void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* in
 	
     float ClearColor[4] = { 0, 0, 0, 0.0 };
     
-	g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0 );
+	g_pImmediateContext->ClearDepthStencilView( g_particleDepthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0 );
     
 	g_pImmediateContext->ClearRenderTargetView( particle.renderTargetView, ClearColor );
 	
-	g_pImmediateContext->OMSetRenderTargets(1, &particle.renderTargetView, g_pDepthStencilView);
+	g_pImmediateContext->OMSetRenderTargets(1, &particle.renderTargetView, g_particleDepthStencilView);
 	
     // Get the projection & view matrix from the camera class
 	

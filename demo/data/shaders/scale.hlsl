@@ -48,7 +48,7 @@ float4 Scale(BufferStruct i) : SV_Target
 	//c0 -= synk8/10;
 	//c0 *= synk9;
 	//c0 = saturate(c0);
-	//return max(saturate(i.color)/4,color);
+	//return (saturate(i.color)*color);
 	return color;
 
 	//return color*imageFade;

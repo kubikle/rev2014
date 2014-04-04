@@ -322,7 +322,7 @@ void DemoInit()
 	InitializeRenderTexture((int)g_options.iWidth, (int)g_options.iHeight, &fxaaAlpha.renderTargetView, &fxaaAlpha.texture, &fxaaAlpha.shaderResourceView, NULL);	
 	InitializeRenderTexture((int)g_options.iWidth, (int)g_options.iHeight, &post.renderTargetView, &post.texture, &post.shaderResourceView, &post.unorderedAccessView);	
 	InitializeRenderTexture((int)g_options.iWidth, (int)g_options.iHeight, &bloom.renderTargetView, &bloom.texture, &bloom.shaderResourceView, &bloom.unorderedAccessView);	
-	InitializeRenderTexture((int)g_options.iWidth, (int)g_options.iHeight, &particle.renderTargetView, &particle.texture, &particle.shaderResourceView, &particle.unorderedAccessView);	
+	InitializeRenderTexture((int)g_options.iWidth*2, (int)g_options.iHeight*2, &particle.renderTargetView, &particle.texture, &particle.shaderResourceView, &particle.unorderedAccessView);	
 
 	// Create UAV from render target
 	result = g_pd3dDevice->CreateUnorderedAccessView(rm.texture, NULL, &rm.unorderedAccessView);
@@ -394,7 +394,7 @@ void SetConstants( double row)
 		(float)sync_get_val(g_syncTracks.synk7, row),
 		(float)sync_get_val(g_syncTracks.synk8, row),
 		(float)sync_get_val(g_syncTracks.synk9, row),
-		(float)(float)g_options.iWidth,
+		(float)g_options.iWidth,
 		(float)g_options.iHeight,
 		(float)g_options.iWidth,
 		(float)g_options.iHeight,
@@ -424,12 +424,12 @@ void RenderToScreen(double row, ID3D11ShaderResourceView *viewToRender, ID3D11Sh
 	g_pImmediateContext->Draw(1, 0);
 }
 
-void SetViewPortToInternal() 
+void SetViewPortToXY(int x, int y) 
 {
 	D3D11_VIEWPORT vp;
 
-	vp.Width = (float)g_options.iWidth;
-	vp.Height = (float)g_options.iHeight;
+	vp.Width = (float)x;
+	vp.Height = (float)y;
 	vp.MinDepth = 0.0;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0.0f;
@@ -461,20 +461,6 @@ void RenderPost(ID3D11ShaderResourceView *view)
 	g_pImmediateContext->PSSetShaderResources( 1, 1, &bloom.shaderResourceView );
 	g_pImmediateContext->PSSetShader(g_pPixelShaders[2], NULL, 0);
 	g_pImmediateContext->Draw(1, 0);
-}
-
-void SetViewPortToScreenSize() 
-{
-	D3D11_VIEWPORT vp;
-
-	vp.Width = (float)g_options.sWidth;
-	vp.Height = (float)g_options.sHeight;
-
-	vp.MinDepth = 0.0;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = (float)g_options.offsetX;
-	vp.TopLeftY = (float)g_options.offsetY;
-	g_pImmediateContext->RSSetViewports(1, &vp);
 }
 
 void Raymarch( double row ) 
@@ -655,7 +641,7 @@ void Render(double row, double delta)
 	LoadShaders();
 #endif
 	
-	SetViewPortToInternal();
+	SetViewPortToXY(g_options.iWidth, g_options.iHeight);
 	//SetViewPortToScreenSize();
 	//g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBuffer, NULL);
 	g_pImmediateContext->IASetInputLayout( g_pParticleVertexLayout );
@@ -685,6 +671,8 @@ void Render(double row, double delta)
 	
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &srvNullView[0] );
 	g_pImmediateContext->PSSetShaderResources( 1, 1, &srvNullView[0] );
+
+	SetViewPortToXY(g_options.iWidth*2, g_options.iHeight*2);
 	
 	FrameRenderParticles(row, delta, post.shaderResourceView);
 
@@ -697,8 +685,8 @@ void Render(double row, double delta)
 
 	g_pImmediateContext->VSSetShader(g_pVertexShader[0], NULL, 0);
 	g_pImmediateContext->GSSetShader(g_pGeometryShader[0], NULL, 0);
+	SetViewPortToXY(g_options.sWidth, g_options.sHeight);
 
-	SetViewPortToScreenSize();
 	RenderToScreen( row, post.shaderResourceView, particle.shaderResourceView);
 
     g_pSwapChain->Present( 0, 0 );

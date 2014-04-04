@@ -93,10 +93,14 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
     // Each thread of the CS updates one of the particles
 	//if ( DTid.x+DTid.x*xRes < g_param.z )
     //{
-		float4 pos = oldPosVelo[DTid.x+DTid.y*g_param.x].pos;
-		float4 vel = oldPosVelo[DTid.x+DTid.y*g_param.x].velo;
-		float4 color = oldPosVelo[DTid.x+DTid.y*g_param.x].color;
-		float timeToLive = oldPosVelo[DTid.x+DTid.y*g_param.x].timeToLive;
+		int index = DTid.x+(DTid.y*xRes*20);
+		
+		//if(index > g_param.z) return;
+		
+		float4 pos = oldPosVelo[index].pos;
+		float4 vel = oldPosVelo[index].velo;
+		float4 color = oldPosVelo[index].color;
+		float timeToLive = oldPosVelo[index].timeToLive;
 		
 		float time = g_time.x/40;
 		float delta = g_time.y;
@@ -105,25 +109,27 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		timeToLive -= delta;
 		
 
-		float x = (float)DTid.x/(float)g_param.x;
-		float y = (float)DTid.y/(float)g_param.y;
+		float x = (float)DTid.x/((float)xRes*20);
+		float y = (float)DTid.y/((float)yRes*20);
 		
 
 		if(timeToLive < 0) 
 		{
-			color = gInput[int2(x*1280/4*2, y*720/4*2)];
+			color = gInput[int2(x*g_param.x, g_param.y-y*g_param.y )];
 
-			//if(color.x +color.y + color.z> 0) {
+			if(color.x +color.y + color.z> 0) {
 
 				//color = saturate(color);
 				//color = 0;
-				pos.xyz = float3((x-.5)*32,(y-.5)*16,0)*40.0;
-				timeToLive = (perlin(float3(pos.xyz)+g_time.x))*5*sin(time);
-				newPosVelo[DTid.x+DTid.y*g_param.x].velo.x = timeToLive;
+				pos.xyz = float3((x-.5)*32,(y-.5)*16,0)*28.0;
+				timeToLive = (perlin(float3(pos.xyz)+g_time.x))*2;
+				//timeToLive = 10;
+				newPosVelo[index].velo.x = timeToLive;
 				//pos.w = 10000.0 * 10000.0;
-			//} else {
-				//color = 0;
-			//}
+			} else {
+				color = 0;
+			}
+			//pos = 10000;
 		}
 
 		
@@ -134,18 +140,19 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		//pos.xyz += (perlin(pos.xyz))*.1;
 
 		//pos.x+=.1;
-		//pos.xyz += (perlin(float3(pos.xyz/100)+time));
-		//pos.z += ((sin(x*5+time)*10+cos(y*10+time*2)*20)/1)*delta;
+		//pos.xyz += (perlin(float3(pos.xyz/100)+time))*delta*1;
+		pos.z += ((sin(x*5+time)*10+cos(y*10+time*2)*20)/1)*delta*10;
 		//pos.z = saturate(pos.z)*10;
 
-		pos.xyz = length(pos.xyz) > 400 ? normalize(pos.xyz)*(400+sin(time)*10) : pos.xyz;
-		pos.z = saturate(length(color.xyz))*10;
+		float t = (450+sin(time)*10);
+		pos.xyz = length(pos.xyz) > t ? normalize(pos.xyz)*t : pos.xyz;
+		//pos.z = (length(color.xyz))*10;
 
 		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
-        newPosVelo[DTid.x+DTid.y*g_param.x].pos = pos;
-        //newPosVelo[DTid.x+DTid.y*g_param.x].velo = float4(vel.xyz, length(accel));
-		newPosVelo[DTid.x+DTid.y*g_param.x].timeToLive = timeToLive;
-		newPosVelo[DTid.x+DTid.y*g_param.x].color = color; //float4(color.xyz,(timeToLive/newPosVelo[DTid.x+DTid.y*g_param.x].velo.x));
+        newPosVelo[index].pos = pos;
+        //newPosVelo[index].velo = float4(vel.xyz, length(accel));
+		newPosVelo[index].timeToLive = timeToLive;
+		newPosVelo[index].color = color; //float4(color.xyz,(timeToLive/newPosVelo[index].velo.x));
     //}
 }

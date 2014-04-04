@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo", "demo_2010.vcxproj", "{06EDC280-1187-4614-A248-E640C095FA6B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sync_player", "..\rocket-code\sync_player.vcxproj", "{5866042C-7FCB-4DB1-BAAD-44DF6567511F}"
@@ -18,20 +18,16 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{06EDC280-1187-4614-A248-E640C095FA6B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.Debug|Win32.Build.0 = Debug|Win32
-		{06EDC280-1187-4614-A248-E640C095FA6B}.Debug|x64.ActiveCfg = Debug|x64
-		{06EDC280-1187-4614-A248-E640C095FA6B}.Debug|x64.Build.0 = Debug|x64
+		{06EDC280-1187-4614-A248-E640C095FA6B}.Debug|x64.ActiveCfg = Debug|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.DebugClient|Win32.ActiveCfg = DebugClient|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.DebugClient|Win32.Build.0 = DebugClient|Win32
-		{06EDC280-1187-4614-A248-E640C095FA6B}.DebugClient|x64.ActiveCfg = DebugClient|x64
-		{06EDC280-1187-4614-A248-E640C095FA6B}.DebugClient|x64.Build.0 = DebugClient|x64
+		{06EDC280-1187-4614-A248-E640C095FA6B}.DebugClient|x64.ActiveCfg = DebugClient|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.Release|Win32.ActiveCfg = Release|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.Release|Win32.Build.0 = Release|Win32
-		{06EDC280-1187-4614-A248-E640C095FA6B}.Release|x64.ActiveCfg = Release|x64
-		{06EDC280-1187-4614-A248-E640C095FA6B}.Release|x64.Build.0 = Release|x64
+		{06EDC280-1187-4614-A248-E640C095FA6B}.Release|x64.ActiveCfg = Release|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.ReleaseClient|Win32.ActiveCfg = ReleaseSync|Win32
 		{06EDC280-1187-4614-A248-E640C095FA6B}.ReleaseClient|Win32.Build.0 = ReleaseSync|Win32
-		{06EDC280-1187-4614-A248-E640C095FA6B}.ReleaseClient|x64.ActiveCfg = ReleaseSync|x64
-		{06EDC280-1187-4614-A248-E640C095FA6B}.ReleaseClient|x64.Build.0 = ReleaseSync|x64
+		{06EDC280-1187-4614-A248-E640C095FA6B}.ReleaseClient|x64.ActiveCfg = Release|Win32
 		{5866042C-7FCB-4DB1-BAAD-44DF6567511F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5866042C-7FCB-4DB1-BAAD-44DF6567511F}.Debug|Win32.Build.0 = Debug|Win32
 		{5866042C-7FCB-4DB1-BAAD-44DF6567511F}.Debug|x64.ActiveCfg = Debug|x64

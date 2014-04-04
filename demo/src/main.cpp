@@ -30,6 +30,7 @@ ID3D11DeviceContext*    g_pImmediateContext = NULL;
 IDXGISwapChain*         g_pSwapChain = NULL;
 ID3D11RenderTargetView* g_pBackBuffer = NULL;
 ID3D11DepthStencilView* g_pDepthStencilView = NULL;
+ID3D11DepthStencilView* g_particleDepthStencilView = NULL;
 
 extern DemoOptions		g_options;
 
@@ -64,8 +65,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	g_options.bpp = 32;
 	g_options.dWidth = 1280;
 	g_options.dHeight = 1280/16*9;
-	g_options.iWidth = 1280/4*2;
-	g_options.iHeight = 720/4*2;
+	g_options.iWidth = 1280/4;
+	g_options.iHeight = 720/4;
 	g_options.offsetX = 0;
 	g_options.offsetY = 0;
 	g_options.sWidth = 0;
@@ -226,6 +227,38 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
 
 
+HRESULT CreateDepthStencil(int width, int height, ID3D11DepthStencilView** depthStencilView) {
+	HRESULT hr = S_OK;
+// Create depth stencil texture
+	ID3D11Texture2D* pDepthStencil = NULL;
+	D3D11_TEXTURE2D_DESC descDepth;
+	descDepth.Width = width;
+	descDepth.Height =  height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	hr = g_pd3dDevice->CreateTexture2D( &descDepth, NULL, &pDepthStencil );
+	if( FAILED( hr ) )
+		return hr;
+
+	// Create the depth stencil view
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	descDSV.Format = descDepth.Format;
+	descDSV.Flags = 0;
+	if( descDepth.SampleDesc.Count > 1 )
+		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	else
+		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+	return g_pd3dDevice->CreateDepthStencilView( pDepthStencil, &descDSV, depthStencilView);
+}
+
 
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
@@ -295,37 +328,10 @@ HRESULT InitDevice()
 
     g_pImmediateContext->OMSetRenderTargets( 1, &g_pBackBuffer, NULL );
 
-	// Create depth stencil texture
-	ID3D11Texture2D* pDepthStencil = NULL;
-	D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width = g_options.iWidth;
-	descDepth.Height =  g_options.iHeight;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
-	hr = g_pd3dDevice->CreateTexture2D( &descDepth, NULL, &pDepthStencil );
-	if( FAILED( hr ) )
+	if( FAILED( CreateDepthStencil(g_options.iWidth, g_options.iHeight, &g_pDepthStencilView) ) )
 		return hr;
-
-	// Create the depth stencil view
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-	descDSV.Format = descDepth.Format;
-	descDSV.Flags = 0;
-	if( descDepth.SampleDesc.Count > 1 )
-		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
-	else
-		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSV.Texture2D.MipSlice = 0;
-	hr = g_pd3dDevice->CreateDepthStencilView( pDepthStencil, &descDSV, &g_pDepthStencilView );
-	if( FAILED( hr ) )
+	if( FAILED( CreateDepthStencil(g_options.iWidth * 2, g_options.iHeight * 2, &g_particleDepthStencilView) ) )
 		return hr;
-
     // Setup the viewport
     D3D11_VIEWPORT vp;
 	vp.Width = g_options.dWidth;

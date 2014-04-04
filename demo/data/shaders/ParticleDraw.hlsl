@@ -112,7 +112,7 @@ void GSParticleDraw(point VSParticleDrawOut input[1], inout TriangleStream<GSPar
     //
     for(int i=0; i<4; i++)
     {
-        float3 position = g_positions[i]*2;
+        float3 position = g_positions[i];
         position = mul( position, (float3x3)g_mInvView ) + input[0].pos;
         output.pos = mul( float4(position,1.0), g_mWorldViewProj ); 
 
