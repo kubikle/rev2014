@@ -18,6 +18,7 @@ struct VSParticleDrawOut
 {
     float3 pos			: POSITION;
     float4 color		: COLOR;
+	float size			: PSIZE;
 };
 
 struct GSParticleDrawOut
@@ -38,7 +39,7 @@ struct PosVelo
     float4 pos;
     float4 velo;
 	float4 color;
-	float  mass;
+	float  size;
 	float timeToLive;
 };
 
@@ -92,6 +93,7 @@ VSParticleDrawOut VSParticleDraw(VSParticleIn input)
     
     output.pos = g_bufPosVelo[input.id].pos;
 	output.color = g_bufPosVelo[input.id].color;
+	output.size = g_bufPosVelo[input.id].size;
     
     //float mag = g_bufPosVelo[input.id].velo.w/9;
     //output.color = lerp( float4(1,0.1,0.1,1), g_bufPosVelo[input.id].color, mag );
@@ -112,7 +114,7 @@ void GSParticleDraw(point VSParticleDrawOut input[1], inout TriangleStream<GSPar
     //
     for(int i=0; i<4; i++)
     {
-        float3 position = g_positions[i];
+        float3 position = g_positions[i]*input[0].size;
         position = mul( position, (float3x3)g_mInvView ) + input[0].pos;
         output.pos = mul( float4(position,1.0), g_mWorldViewProj ); 
 

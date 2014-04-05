@@ -30,7 +30,7 @@ struct PosVelo
     float4 pos;
     float4 velo;
 	float4 color;
-	float  mass;
+	float  size;
 	float  timeToLive;
 };
 
@@ -93,7 +93,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
     // Each thread of the CS updates one of the particles
 	//if ( DTid.x+DTid.x*xRes < g_param.z )
     //{
-		int index = DTid.x+(DTid.y*xRes*20);
+		int index = DTid.x+(DTid.y*xRes*40);
 		
 		//if(index > g_param.z) return;
 		
@@ -109,8 +109,8 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		timeToLive -= delta;
 		
 
-		float x = (float)DTid.x/((float)xRes*20);
-		float y = (float)DTid.y/((float)yRes*20);
+		float x = (float)DTid.x/((float)xRes*40.0);
+		float y = (float)DTid.y/((float)yRes*40.0);
 		
 
 		if(timeToLive < 0) 
@@ -141,7 +141,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 
 		//pos.x+=.1;
 		//pos.xyz += (perlin(float3(pos.xyz/100)+time))*delta*1;
-		pos.z += ((sin(x*5+time)*10+cos(y*10+time*2)*20)/1)*delta*10;
+		//pos.z += ((sin(x*5+time)*10+cos(y*10+time*2)*20)/1)*delta;
 		//pos.z = saturate(pos.z)*10;
 
 		float t = (450+sin(time)*10);
@@ -153,6 +153,8 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
         newPosVelo[index].pos = pos;
         //newPosVelo[index].velo = float4(vel.xyz, length(accel));
 		newPosVelo[index].timeToLive = timeToLive;
-		newPosVelo[index].color = color; //float4(color.xyz,(timeToLive/newPosVelo[index].velo.x));
+		newPosVelo[index].color = float4(color.xyz,saturate((timeToLive/newPosVelo[index].velo.x)*10));
+		//newPosVelo[index].size = saturate((color.x+color.y+color.z)*2);
+		newPosVelo[index].size = 1.1 + sin(time);
     //}
 }

@@ -12,8 +12,8 @@
 #include "../include/options.h"
 #include "../../rocket-code/sync/sync.h"
 
-#define PARTICLE_X 640
-#define PARTICLE_Y 360
+#define PARTICLE_X 1280
+#define PARTICLE_Y 720
 #define MAX_PARTICLES PARTICLE_X*PARTICLE_Y         // the number of particles in the n-body simulation
 
 typedef struct{
