@@ -1,6 +1,6 @@
 #include <d3d11.h>	
 #include <d3dx11.h>
-
+#include <math.h> 
 #include <d3dx10math.h>
 #include <xnamath.h>
 #include <vector>
@@ -97,8 +97,10 @@ struct PARTICLE
     D3DXVECTOR4 pos;
     D3DXVECTOR4 velo;
 	D3DXVECTOR4 color;
-	float		mass;
+	float		size;
 	float		timeToLive;
+	float		mass;
+	float		temp;
 };
 
 template <class T>
@@ -152,7 +154,11 @@ void LoadParticles( PARTICLE* pParticles,
 
         pParticles[i].velo = Velocity;
 
-		pParticles[i].timeToLive = 1;
+		pParticles[i].timeToLive = -1;
+		pParticles[i].size = 1;
+		pParticles[i].mass = 1;
+		
+
     }    
 }
 
@@ -388,15 +394,15 @@ void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* in
 	
 	g_World = XMMatrixIdentity();
 
-//	float camFov = (float)sync_get_val(g_syncTracks.camFov, row);
-	float camFov = 1.0f;
+	float camFov = (float)sync_get_val(g_syncTracks.camFov, row);
+	//float camFov = 1.7f;
 	if(camFov < 0.1) {
 		camFov = 0.1;
 	}
 
 	g_Projection = XMMatrixPerspectiveFovLH(camFov , g_options.iWidth / g_options.iHeight, 0.1f, 1000.0f);
 
-	XMVECTOR Eye = XMVectorSet( 0.0f, 0.0f, -500.0f, 0.0f );
+	XMVECTOR Eye = XMVectorSet( sin(row/64) * 8.0f, cos(row/128) * 4.5f, -100.0f, 0.0f );
 	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up );

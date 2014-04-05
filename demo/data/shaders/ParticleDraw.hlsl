@@ -41,6 +41,8 @@ struct PosVelo
 	float4 color;
 	float  size;
 	float timeToLive;
+	float mass;
+	float temp;
 };
 
 Texture2D		            g_txDiffuse;
