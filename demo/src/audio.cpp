@@ -18,7 +18,7 @@ sync_device *rocket;
 
 SyncTracks g_syncTracks;
 
-static const float bpm = 130.0f; /* beats per minute */
+static const float bpm = 140.0f; /* beats per minute */
 static const int rpb = 8; /* rows per beat */
 static const double row_rate = (double(bpm) / 60) * (double)rpb;
 
@@ -134,6 +134,12 @@ void GetTracks()
 	g_syncTracks.noise = sync_get_track(rocket, "noise");
 	g_syncTracks.image = sync_get_track(rocket, "image");
 	g_syncTracks.imageFade = sync_get_track(rocket, "imageFade");
+
+	g_syncTracks.part1 = sync_get_track(rocket, "part1");
+	g_syncTracks.part2 = sync_get_track(rocket, "part2");
+	g_syncTracks.part3 = sync_get_track(rocket, "part3");
+	g_syncTracks.part4 = sync_get_track(rocket, "part4");
+
 }
 
 void PlayMusic() 

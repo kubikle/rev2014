@@ -89,6 +89,10 @@ struct CB_CS
 {
     UINT param[4];
     float time[4];
+	float part1;
+	float part2;
+	float part3;
+	float part4;
 };
 
 #pragma pack(4)
@@ -298,6 +302,10 @@ void MoveParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV)
 		pcbCS->param[2] = MAX_PARTICLES;
         pcbCS->time[0] = row;
         pcbCS->time[1] = delta;
+		pcbCS->part1 = (float)sync_get_val(g_syncTracks.part1, row);
+		pcbCS->part2 = (float)sync_get_val(g_syncTracks.part2, row);
+		pcbCS->part3 = (float)sync_get_val(g_syncTracks.part3, row);
+		pcbCS->part4 = (float)sync_get_val(g_syncTracks.part4, row);
         g_pImmediateContext->Unmap( g_pcbCS, 0 );
         ID3D11Buffer* ppCB[1] = { g_pcbCS };
         g_pImmediateContext->CSSetConstantBuffers( 0, 1, ppCB );
@@ -401,8 +409,9 @@ void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* in
 	}
 
 	g_Projection = XMMatrixPerspectiveFovLH(camFov , g_options.iWidth / g_options.iHeight, 0.1f, 1000.0f);
-
-	XMVECTOR Eye = XMVectorSet( sin(row/64) * 8.0f, cos(row/128) * 4.5f, -100.0f, 0.0f );
+	float x = sin(row/64) * 8.0f;
+	float y = cos(row/128) * 4.5f;
+	XMVECTOR Eye = XMVectorSet( x, y, -100.0f+abs(x)*2+abs(y)*2, 0.0f );
 	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up );

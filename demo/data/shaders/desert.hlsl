@@ -29,14 +29,16 @@ float intersect( float3 p, out float materialID )
 	
 	float dist = 1000.0f;
 	float tmpDist = 600.0f;
+	materialID = 1; 	
+	float3 op = p;
+
 	dist = p.y+synk5;
 	tmpDist = -p.y+synk5;
 	if(tmpDist < dist) {
 		dist = tmpDist;
 	}
 	
-	materialID = 1; 	
-	float3 op = p;
+	
 	//p.xy = R(p.xy,p.z);
 	
 	p.z = fmod(abs(p.z),2)-1;	
@@ -52,7 +54,13 @@ float intersect( float3 p, out float materialID )
 	p=op;	
 	
 	if(synk1==10) {
-		p.y = fmod(abs(p.y),16)-4;
+	
+		p.xy -=.5;
+		p.xy = abs(p.xy);
+		p.x = sqrt(pow(p.x,2)+pow(p.y,2));
+		p.y = atan(p.y/p.x);
+
+		p.z = fmod(abs(p.z),16)-4;
 		tmpDist = rotBox(p,8,1, beat/10);
 		tmpDist = min(tmpDist, rotBox(p,16,2, beat/5));
 	}
@@ -69,7 +77,7 @@ float intersect( float3 p, out float materialID )
 		//float tmpDist2 = udRoundBox(p, float3(20+(sin(p.z/2-beat))+(cos(p.z*4-beat))/10,15+(sin(p.z/2-beat))+(cos(p.z*4-beat))/10,50000),4);
 		p.yz = R(p.yz,PI/2);
 		float tmpDist2 = sdCylinder(p, float3(0,0,synk6));
-		tmpDist2+=abs(fbm2(p/28,beat/32)*16);//+sin(p.x/5+beat/2)+cos(p.z/8+beat/3)+cos(p.y/2+beat/4);
+		tmpDist2+=abs(fbm2(p/28,beat/32)*32);//+sin(p.x/5+beat/2)+cos(p.z/8+beat/3)+cos(p.y/2+beat/4);
 
 		if(-tmpDist2<dist) {
 			materialID = 3; 			
@@ -93,7 +101,7 @@ float4 main(float2 uv) : COLOR
 	float3 rd = {(-1+2*uv)*float2(2.25,1), camFov < .01 ? .01 : camFov};
 	
 	
-	float3 ro = {synk2,synk3,beat*synk4};
+	float3 ro = {synk2,synk3,synk4};
 	
 	rd.yz = R(rd.yz,camRot.x);
 	rd.xz = R(rd.xz,camRot.y);
@@ -103,17 +111,18 @@ float4 main(float2 uv) : COLOR
 
 	float3 rayPosition = ro + rd;
 
-	float3 color = 1;
+	float3 color = 0;
 	float id= 0;
 	float steps;
 	float volumeFog;
 	//ray march
 	float dist = rm(rayPosition, rd,.25, 400, id, steps, volumeFog); 
 	//if(id==4) color=.1;
-	dist += pow(perlin(float3(rayPosition.x*10, 0, 0)),2)*20;
-	color = pow((dist/300)*float3(.7,.4,.2),2);
-	color += saturate((float3(.1,.7,1)*steps/100)/(dist/10));
-	return float4(color,1); 
+	//dist += pow(perlin(float3(rayPosition.xyz/10)),2)*200;
+	color = pow((dist/600)*COL6/4,2);
+	//color = pow((dist/600)*float3(85/255.,137/255.,125/255.),2);
+	color += saturate((COL3*steps/100)/(dist/10));
+	return float4(saturate(color),1); 
 }
 
 

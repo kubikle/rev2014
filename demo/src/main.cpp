@@ -136,7 +136,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
         {
 			double row = GetAudioRow();
 			double delta = row - lastRow;
-			if(row > 4000) break;
+			if(row > 3504) break;
 #ifndef SYNC_PLAYER
 			if(delta < 0) {
 				delta = 0;

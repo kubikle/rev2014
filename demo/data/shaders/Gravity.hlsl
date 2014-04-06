@@ -23,6 +23,12 @@ cbuffer cbCS : register( b0 )
                         // pcbCS->param[1] = dimx;              
     float4  g_time;   // pcbCS->paramf[0] = 0.1f;
                         // pcbCS->paramf[1] = 1; 
+	float	part1;
+	float	part2;
+
+	float	part3;
+	float	part4;
+
 };
 
 struct PosVelo
@@ -115,7 +121,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		float y = (float)DTid.y/((float)yRes*40.0);
 		
 
-		if(timeToLive < 0) 
+		if(timeToLive < 0 || delta == 0) 
 		{
 			color = gInput[int2(x*g_param.x, g_param.y-y*g_param.y )];
 
@@ -124,7 +130,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 				//color = 0;
 				pos.xyz = float3((x-.5)*32,(y-.5)*16,0)*12.0;
 				//timeToLive = abs(fbm((float3(0,0,y*10+time))))+1;
-				timeToLive = abs(perlin(pos.xyz)*8);
+				timeToLive = abs(perlin(pos.xyz)*part1);
 				newPosVelo[index].velo.x = timeToLive;
 				//pos.w = 10000.0 * 10000.0;
 		}
@@ -137,23 +143,33 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		//pos.xyz += (perlin(pos.xyz))*.1;
 
 		//pos.x+=.1;
-		//pos.x += (fbm(float3(pos.xyz/100)+time))*delta*timeToLive;
+		//pos.z += (fbm(float3(pos.xyz/1000)+time)-.5)*delta*newPosVelo[index].velo.x*100*saturate(color.x);
 		//pos.z += ((sin(x*5+time)*10+cos(y*10+time*2)*20)/1)*delta;
 		//pos.z = saturate(pos.z)*10;
+		//pos.z = (sin(x*PI))*16 + (sin(y*PI)*9)*(1+fmod(time,1));
 		pos.z = (sin(x*PI))*16 + (sin(y*PI)*9);
-		pos.z /=2;
-		float t = (150+fmod(time,4));
+
+		//pos.z /=2;
+		
+		//float t = (150+fmod(time,4));
 		//pos.z = length(pos.xy) > t ? (fbm(float3(pos.xyz/10)+time))*-(abs(pos.x)-(t+10)) : pos.z;
-		//pos.z = (length(color.xyz))*10;
-		pos.z = pow(length(pos.xy)/(4*12),2)*(fbm(float3(pos.xyz/20)+time));
+
+		//pos.z -= pow(saturate(length(color.xyz)),2)*10;
+		
+		pos.z += pow(length(pos.xy)/(4*12*3),10)*(fbm(float3(pos.xyz/20)+time/16));
+		
 		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
         newPosVelo[index].pos = pos;
         //newPosVelo[index].velo = float4(vel.xyz, length(accel));
 		newPosVelo[index].timeToLive = timeToLive;
-		newPosVelo[index].color = float4(color.xyz, .5);//float4(color.xyz,saturate((timeToLive/newPosVelo[index].velo.x)*10));
+		//newPosVelo[index].color = float4(color.xyz, .05);//float4(color.xyz,saturate((timeToLive/newPosVelo[index].velo.x)*10));
+
+		//newPosVelo[index].color = float4(color.xyz,pow(saturate((timeToLive/newPosVelo[index].velo.x)),2)/20);
+		newPosVelo[index].color = float4(color.xyz,.1);
+
 		//newPosVelo[index].size = saturate((color.x+color.y+color.z)*2);
-		newPosVelo[index].size = .5;
+		newPosVelo[index].size = .75;
 		newPosVelo[index].mass = 1;
     //}
 }

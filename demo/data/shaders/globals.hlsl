@@ -26,6 +26,13 @@ static float PI = acos(-1);
 static int castShadow = 1;
 static float ASPECT = 1.7777;
 
+static float3 COL1 = float3(129,143,108)/255;
+static float3 COL2 = float3(140,199,193)/255;
+static float3 COL3 = float3(147,222,218)/255;
+static float3 COL4 = float3(184,229,235)/255;
+static float3 COL5 = float3(239,197,172)/255;
+static float3 COL6 = float3(225,177,137)/255;
+
 // For Gradient we need g_data as output
 //[
 RWTexture2D<float4> g_out : register(u1);

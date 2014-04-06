@@ -18,6 +18,11 @@ typedef struct {
 	const struct sync_track *noise;
 	const struct sync_track *image;
 	const struct sync_track *imageFade;
+	const struct sync_track *part1;
+	const struct sync_track *part2;
+	const struct sync_track *part3;
+	const struct sync_track *part4;
+
 } SyncTracks; 
 
 #endif

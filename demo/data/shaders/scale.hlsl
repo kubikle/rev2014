@@ -28,7 +28,7 @@ float4 Scale(BufferStruct i) : SV_Target
 	i.color.xyz = Desaturate(i.color.xyz,saturation);
 
 	i.color = saturate(i.color);		
-	
+
 	
 	color = txBloom.Sample( samPoint, i.uv);
 	
@@ -48,8 +48,8 @@ float4 Scale(BufferStruct i) : SV_Target
 	//c0 -= synk8/10;
 	//c0 *= synk9;
 	//c0 = saturate(c0);
-	//return (saturate(i.color)*color);
-	return color;
+	return (saturate(i.color)/10+color)*fade;
+	//return color;
 
 	//return color*imageFade;
 }
