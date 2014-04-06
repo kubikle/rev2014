@@ -8,7 +8,7 @@ void CalculateScreenSize();
 typedef struct {
 	double dWidth;
 	double dHeight;
-	int bpp;
+	UINT bpp;
 	int fullscreen;
 	double aspectRatio;
 	double iWidth;

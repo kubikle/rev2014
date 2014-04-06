@@ -1,20 +1,6 @@
-#include <D3D11.h>
-#include <D3DCompiler.h>
-#include <d3dx11.h>
-#include <vector>
-#include <map>
-#include <string>
-
-using namespace std;
-
-extern bool IsFileModified(string shader);
-
-#pragma warning( disable : 4996)
-
-extern void Quit(LPCTSTR lpText);
+#include "../include/globals.h"
 
 HRESULT				    g_hResult;
-extern ID3D11Device*    g_pd3dDevice;
 
 typedef vector <void*> vector_pointer;
 
@@ -24,9 +10,6 @@ vector<ID3D11GeometryShader*>   g_pGeometryShader;
 vector<ID3D11PixelShader*>      g_pPixelShaders;
 
 map<string, int>				g_positionMap;
-
-
-extern ID3D11InputLayout*                  g_pParticleVertexLayout;
 
 void LoadShader(string fileName, string entryPoint, string shaderModel) 
 {

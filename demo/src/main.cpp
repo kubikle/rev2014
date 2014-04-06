@@ -6,13 +6,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 #include <windows.h>
-#include <d3d11.h>
-#include <d3dx11.h>
-
-#include <dxgi.h>
 
 #include "../resource.h"
-#include "../include/options.h"
+
+#include "../include/globals.h"
 
 #pragma comment(lib, "dxgi.lib")
 
@@ -32,18 +29,6 @@ ID3D11RenderTargetView* g_pBackBuffer = NULL;
 ID3D11DepthStencilView* g_pDepthStencilView = NULL;
 ID3D11DepthStencilView* g_particleDepthStencilView = NULL;
 
-extern DemoOptions		g_options;
-
-//--------------------------------------------------------------------------------------
-// Forward declarations
-//--------------------------------------------------------------------------------------
-extern void Render(double row, double delta);
-extern void InitAudio();
-extern double GetAudioRow();
-extern void InitOptions();
-extern void LoadShaders();
-extern void DemoInit();
-extern void PlayMusic();
 
 
 HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow );

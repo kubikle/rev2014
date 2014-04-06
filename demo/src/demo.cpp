@@ -1,26 +1,6 @@
-#include <d3d11.h>
-#include <d3dx10math.h>
-#include <vector>
-#include <map>
-#include <string>
-#include "../include/audio.h"
-#include "../include/options.h"
-#include "../../rocket-code/sync/sync.h"
-#include <d3dx11tex.h>
+#include "../include/globals.h"
 
 using namespace std;
-
-extern ID3D11Device*					g_pd3dDevice;
-extern ID3D11DeviceContext*				g_pImmediateContext;
-extern IDXGISwapChain*					g_pSwapChain;
-extern ID3D11RenderTargetView*			g_pBackBuffer;
-extern DemoOptions						g_options;
-extern SyncTracks						g_syncTracks;
-extern vector<ID3D11ComputeShader*>		g_pComputeShaders;
-extern vector<ID3D11VertexShader*>		g_pVertexShader;
-extern vector<ID3D11GeometryShader*>    g_pGeometryShader;
-extern vector<ID3D11PixelShader*>       g_pPixelShaders;
-extern map<string, int>					g_positionMap;
 
 ID3D11ShaderResourceView*				g_pDataSRV;
 ID3D11UnorderedAccessView*				g_pDataUAV;
@@ -54,15 +34,6 @@ View particle;
 vector <ID3D11ShaderResourceView*>  g_pImages;
 
 ID3D11SamplerState*         g_pSamplerLinear, *g_pSamplerPoint;
-
-
-extern HRESULT CreateParticleResources();
-extern void LoadShaders();
-extern void Quit(LPCTSTR lpText);
-extern void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV);
-extern HRESULT CreateParticleResources();
-extern ID3D11InputLayout* g_pParticleVertexLayout;
-extern bool IsFileModified(string shader);
  
 void Render(double row);
 
@@ -432,7 +403,7 @@ void SetConstants( double row)
 
 void RenderToScreen(double row, ID3D11ShaderResourceView *viewToRender, ID3D11ShaderResourceView *viewToRender2) 
 {
-	int imageId = (int)sync_get_val(g_syncTracks.image, row);
+	//int imageId = (int)sync_get_val(g_syncTracks.image, row);
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBuffer, NULL);
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &viewToRender );
 	//g_pImmediateContext->PSSetShaderResources( 1, 1, &viewToRender2);

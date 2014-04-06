@@ -159,7 +159,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		//pos.z -= pow(saturate(length(color.xyz)),2)*10;
 		
 		//reunat
-		//pos.z += pow(length(pos.xy)/(4*12*3),10)*(fbm(float3(pos.xyz/20)+time/16));
+		pos.z += pow(length(pos.xy)/(4*12*3),10)*(fbm(float3(pos.xyz/20)+time/16))*delta*.1;
 		
 		pos.xy += (fbm(float3(pos.xyz/10)+time/10)-.5)*delta*mass*4;
 		

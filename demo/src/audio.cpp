@@ -1,14 +1,4 @@
-#include <bass.h>
-#include <math.h>
-#include "../include/audio.h"
-#include "../include/options.h"
-#include "../../rocket-code/sync/sync.h"
-#include <Strsafe.h>
-
-extern void Quit(LPCTSTR lpText);
-
-extern HWND				g_hWnd;
-extern DemoOptions		g_options;
+#include "../include/globals.h"
 
 void InitAudio();
 double GetAudioRow();

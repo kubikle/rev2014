@@ -1,16 +1,4 @@
-#include <d3d11.h>	
-#include <d3dx11.h>
-#include <math.h> 
-#include <d3dx10math.h>
-#include <xnamath.h>
-#include <vector>
-#include <map>
-#include <string>
-
-
-#include "../include/audio.h"
-#include "../include/options.h"
-#include "../../rocket-code/sync/sync.h"
+#include "../include/globals.h"
 
 #define PARTICLE_X 1280
 #define PARTICLE_Y 720
@@ -34,19 +22,6 @@ using namespace std;
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
 #endif
-
-extern ID3D11Device*					g_pd3dDevice;
-extern ID3D11DeviceContext*				g_pImmediateContext;
-extern vector<ID3D11ComputeShader*>		g_pComputeShaders;
-extern vector<ID3D11VertexShader*>		g_pVertexShader;
-extern vector<ID3D11GeometryShader*>    g_pGeometryShader;
-extern vector<ID3D11PixelShader*>       g_pPixelShaders;
-extern map<string, int>					g_positionMap;
-extern ID3D11DepthStencilView*			g_particleDepthStencilView;
-
-
-extern SyncTracks						g_syncTracks;
-extern DemoOptions						g_options;
 
 //ID3D11RenderTargetView* pRTV;
 //ID3D11DepthStencilView* pDSV;

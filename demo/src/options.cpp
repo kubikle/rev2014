@@ -2,13 +2,11 @@
 #include <tchar.h>
 
 #include "../resource.h"
-#include "../include/options.h"
-#include <Strsafe.h>
 
-extern HWND g_hWnd;
+#include "../include/globals.h"
 
 typedef struct {
-	int w,h;
+	UINT w,h;
 } RES;
 
 #define MAXNUMRES 4096
@@ -82,7 +80,7 @@ BOOL CALLBACK OptionsDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPar
 		SendDlgItemMessage(hwnd, IDC_QUALITY, CB_SETCURSEL, 0, 0);
 
 		for (int i=0; i<nRes; i++) {
-			if (ress[i].w==GetSystemMetrics(SM_CXSCREEN) && ress[i].h==GetSystemMetrics(SM_CYSCREEN)) {
+			if (ress[i].w==(UINT)GetSystemMetrics(SM_CXSCREEN) && ress[i].h==(UINT)GetSystemMetrics(SM_CYSCREEN)) {
 				SendDlgItemMessage(hwnd, IDC_RESOLUTION, CB_SETCURSEL, i, 0);
 			}
 		}
