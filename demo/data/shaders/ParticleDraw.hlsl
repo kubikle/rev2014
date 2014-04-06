@@ -134,5 +134,5 @@ float4 PSParticleDraw(PSParticleDrawIn input) : SV_Target
 {       
     //return float4(.1,.1,.1,0.2);//*float4(input.tex,1,1);
 	float diffuse = (sin(input.tex.x*PI)*sin(input.tex.y*PI))*2;
-	return input.color*diffuse;
+	return input.color*saturate(pow(diffuse,2));
 }

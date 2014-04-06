@@ -138,14 +138,11 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			double delta = row - lastRow;
 			if(row > 3504) break;
 #ifndef SYNC_PLAYER
-			if(delta < 0) {
-				delta = 0;
-			}
+			
 			if(row == lastRow) {
 				// Turha syödä kaikki resursseja, jos pause päällä.
 				Sleep(100);
 			}
-			
 #endif
 			
 			lastRow = row;

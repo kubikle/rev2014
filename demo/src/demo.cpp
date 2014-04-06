@@ -62,6 +62,7 @@ extern void Quit(LPCTSTR lpText);
 extern void FrameRenderParticles(double row, double delta, ID3D11ShaderResourceView* inputSRV);
 extern HRESULT CreateParticleResources();
 extern ID3D11InputLayout* g_pParticleVertexLayout;
+extern bool IsFileModified(string shader);
  
 void Render(double row);
 
@@ -227,15 +228,58 @@ void BlurFilterInit()
 
 void LoadImage( string name ) 
 {
-	ID3D11ShaderResourceView *view;
-	g_pImages.push_back(view);
-	HRESULT result = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice,
-		name.c_str(),
-		NULL, NULL, &g_pImages[g_pImages.size()-1],NULL	);
+	if(IsFileModified(name)) {
+	
+		ID3D11ShaderResourceView *view;
+		int i = g_positionMap[name];
+		if(i) {				
+			g_pImages[i-1]->Release();
+		} else {
+			g_positionMap[name] = g_pImages.size()+1;				
+			g_pImages.push_back(view);
+		}
+		HRESULT result = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice,
+			name.c_str(),
+			NULL, NULL, &g_pImages[g_positionMap[name]-1],NULL	);
 
-	if( FAILED( result ) ) {
-		Quit(("Couldn't load " + name).c_str());
+		if( FAILED( result ) ) {
+			Quit(("Couldn't load " + name).c_str());
+		}
 	}
+}
+
+void LoadImages() {
+	LoadImage("data/images/c.png");	
+	LoadImage("data/images/u.png");	
+	LoadImage("data/images/b.png");	
+	LoadImage("data/images/i.png");	
+	LoadImage("data/images/c2.png");	
+	LoadImage("data/images/l.png");	
+	LoadImage("data/images/e.png");	
+	LoadImage("data/images/eye.png");
+	LoadImage("data/images/cubicle2d.png");
+	LoadImage("data/images/htth.png");
+	LoadImage("data/images/ronn.png");
+	LoadImage("data/images/kolmas.png");
+	LoadImage("data/images/aalto.png");
+	LoadImage("data/images/id.png");
+	LoadImage("data/images/korot.png");
+	LoadImage("data/images/nousee.png");
+	LoadImage("data/images/yyteet.png");
+	LoadImage("data/images/tulee.png");
+
+	LoadImage("data/images/kasetti1.png");
+	LoadImage("data/images/kasetti2.png");
+	LoadImage("data/images/kasetti3.png");
+
+	LoadImage("data/images/isokeha.png");
+	LoadImage("data/images/isokeha_tulee.png");
+
+	LoadImage("data/images/skyfox.png");
+	LoadImage("data/images/JuhoAP.png");
+	LoadImage("data/images/tripper.png");
+
+	LoadImage("data/images/julia.png");
 }
 
 void DemoInit()
@@ -329,35 +373,8 @@ void DemoInit()
 	if(FAILED(result)) {
 		Quit("Couldn't create point UAV from render target");
 	}
-	LoadImage("data/images/c.png");	
-	LoadImage("data/images/u.png");	
-	LoadImage("data/images/b.png");	
-	LoadImage("data/images/i.png");	
-	LoadImage("data/images/c2.png");	
-	LoadImage("data/images/l.png");	
-	LoadImage("data/images/e.png");	
-	LoadImage("data/images/eye.png");
-	LoadImage("data/images/cubicle2d.png");
-	LoadImage("data/images/htth.png");
-	LoadImage("data/images/ronn.png");
-	LoadImage("data/images/kolmas.png");
-	LoadImage("data/images/aalto.png");
-	LoadImage("data/images/id.png");
-	LoadImage("data/images/korot.png");
-	LoadImage("data/images/nousee.png");
-	LoadImage("data/images/yyteet.png");
-	LoadImage("data/images/tulee.png");
+	LoadImages();
 
-	LoadImage("data/images/kasetti1.png");
-	LoadImage("data/images/kasetti2.png");
-	LoadImage("data/images/kasetti3.png");
-
-	LoadImage("data/images/isokeha.png");
-	LoadImage("data/images/isokeha_tulee.png");
-
-	LoadImage("data/images/skyfox.png");
-	LoadImage("data/images/JuhoAP.png");
-	LoadImage("data/images/tripper.png");
 	
 	BlurFilterInit();
 
@@ -640,6 +657,7 @@ void Render(double row, double delta)
 {
 	
 #ifndef SYNC_PLAYER
+	LoadImages();
 	LoadShaders();
 #endif
 	
