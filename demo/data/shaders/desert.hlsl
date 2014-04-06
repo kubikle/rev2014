@@ -92,6 +92,7 @@ float intersect( float3 p, out float materialID )
 
 float4 main(float2 uv) : COLOR
 {	
+	return 0;
 	float3 light = 0.57703;
 	light = normalize(light);
 	//sphere1.x = 0.5+cos(beat);

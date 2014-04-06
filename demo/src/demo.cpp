@@ -453,12 +453,14 @@ void RenderFxaa(ID3D11ShaderResourceView *viewToRender)
 	g_pImmediateContext->Draw(1, 0);
 }
 
-void RenderPost(ID3D11ShaderResourceView *view) 
+void RenderPost(ID3D11ShaderResourceView *view, double row) 
 {
 	//post
+	int imageId = (int)sync_get_val(g_syncTracks.image, row);
+	imageId %= g_pImages.size();
 	g_pImmediateContext->OMSetRenderTargets(1, &post.renderTargetView, NULL);
 	g_pImmediateContext->PSSetShaderResources( 0, 1, &view );
-	g_pImmediateContext->PSSetShaderResources( 1, 1, &bloom.shaderResourceView );
+	g_pImmediateContext->PSSetShaderResources( 1, 1, &g_pImages[imageId] );
 	g_pImmediateContext->PSSetShader(g_pPixelShaders[2], NULL, 0);
 	g_pImmediateContext->Draw(1, 0);
 }
@@ -661,10 +663,10 @@ void Render(double row, double delta)
 
 	//RenderFxaa(rm.shaderResourceView);
 
-	g_pImmediateContext->OMSetRenderTargets(1, &blurH.renderTargetView, NULL);
-	Bloom(rm.shaderResourceView, (UINT)sync_get_val(g_syncTracks.bloom, row));
+	//g_pImmediateContext->OMSetRenderTargets(1, &blurH.renderTargetView, NULL);
+	//Bloom(rm.shaderResourceView, (UINT)sync_get_val(g_syncTracks.bloom, row));
 
-	RenderPost(rm.shaderResourceView);
+	RenderPost(rm.shaderResourceView, row);
 
 	g_pImmediateContext->OMSetRenderTargets(1, &blurH.renderTargetView, NULL);
 	Blur(post.shaderResourceView, post.unorderedAccessView, (UINT)sync_get_val(g_syncTracks.blur, row));

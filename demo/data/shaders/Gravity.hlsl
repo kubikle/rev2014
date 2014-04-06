@@ -110,6 +110,8 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		float4 color = oldPosVelo[index].color;
 		float timeToLive = oldPosVelo[index].timeToLive;
 		
+		float mass = oldPosVelo[index].mass;
+
 		float time = g_time.x/8;
 		float delta = g_time.y;
 	
@@ -124,7 +126,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		if(timeToLive < 0 || delta == 0) 
 		{
 			color = gInput[int2(x*g_param.x, g_param.y-y*g_param.y )];
-
+			mass = length(color.xyz);
 
 				//color = saturate(color);
 				//color = 0;
@@ -138,12 +140,10 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		
 	
 		float3 accel = 0;
-		float mass = g_fParticleMass;
 	
 		//pos.xyz += (perlin(pos.xyz))*.1;
 
 		//pos.x+=.1;
-		//pos.z += (fbm(float3(pos.xyz/1000)+time)-.5)*delta*newPosVelo[index].velo.x*100*saturate(color.x);
 		//pos.z += ((sin(x*5+time)*10+cos(y*10+time*2)*20)/1)*delta;
 		//pos.z = saturate(pos.z)*10;
 		//pos.z = (sin(x*PI))*16 + (sin(y*PI)*9)*(1+fmod(time,1));
@@ -158,6 +158,8 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		
 		pos.z += pow(length(pos.xy)/(4*12*3),10)*(fbm(float3(pos.xyz/20)+time/16));
 		
+		pos.xy += (fbm(float3(pos.xyz/10)+time/10)-.5)*delta*mass*10;
+		pos.z *= (fbm(float3(pos.xyz/10)+time/10)-.5)*delta*mass*20;
 		//if(abs(pos.x)>.5) pos.x = sign(pos.x)*.5;
 		
         newPosVelo[index].pos = pos;
@@ -169,7 +171,7 @@ void CSMain( uint3 Gid : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 		newPosVelo[index].color = float4(color.xyz,.1);
 
 		//newPosVelo[index].size = saturate((color.x+color.y+color.z)*2);
-		newPosVelo[index].size = .75;
-		newPosVelo[index].mass = 1;
+		newPosVelo[index].size = 1;
+		newPosVelo[index].mass = mass;
     //}
 }

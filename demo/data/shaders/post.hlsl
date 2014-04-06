@@ -9,7 +9,7 @@ float4 Post(BufferStruct i) : SV_Target
 	
 	i.color = txDiffuse.Sample( samLinear, i.uv);
 
-	//i.color +=pow(txBloom.Sample( samLinear, i.uv ),bloomPower);
+	i.color +=pow(txBloom.Sample( samLinear, i.uv ),bloomPower)*imageFade;
 	
 	//float4 rad = 0;
 	//for(float j = 1; j < 2+sin(beat)/2; j+=.01) {
