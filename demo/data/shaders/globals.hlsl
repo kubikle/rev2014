@@ -37,6 +37,13 @@ static float3 COL6 = float3(225,177,137)/255;
 //[
 RWTexture2D<float4> g_out : register(u1);
 //]
+
+float sminp(float a, float b) {
+    float k=abs(sin(iGlobalTime))*2.+0.5;
+    float h = clamp( 0.5+0.5*(b-a)/k, 0.0, 1.0 );
+    return mix( b, a, h ) - k*h*(1.0-h);
+}
+
 static float3x3 m = { 0.00,  0.80,  0.60,
 			  -0.80,  0.36, -0.48,
 			  -0.60, -0.48,  0.64 };
