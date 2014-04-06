@@ -251,6 +251,8 @@ void LoadImages() {
 	LoadImage("data/images/tripper.png");
 
 	LoadImage("data/images/julia.png");
+	LoadImage("data/images/super.png");
+	LoadImage("data/images/frak1.png");
 }
 
 void DemoInit()
