@@ -23,11 +23,7 @@ float4 Scale(BufferStruct i) : SV_Target
 	
 	//i.color +=i_background*max(0,1-sin(i.uv.y*PI)*sin(i.uv.x*PI))*sin(i.uv.y*240)*sin(i.uv.x*320);
 	//i.color +=i_background*max(0,1-sin(i.uv.y*PI)*sin(i.uv.x*PI))*(sin(i.uv.y*500+random(beat)*10))*(perlin(float3(i.uv.xy,i.uv.x*i.uv.y+beat/8)*3));	
-	i.color *=min(1,sin(i.uv.y*PI)*sin(i.uv.x*PI)*30);
-	
-	i.color.xyz = Desaturate(i.color.xyz,saturation);
-
-	i.color = saturate(i.color);		
+		
 
 	
 	color = txBloom.Sample( samPoint, i.uv);
@@ -48,7 +44,8 @@ float4 Scale(BufferStruct i) : SV_Target
 	//c0 -= synk8/10;
 	//c0 *= synk9;
 	//c0 = saturate(c0);
-	return (saturate(i.color)/10+color);
+	if(i.uv.x <.25) return i.color;
+	else return color;
 	//return color;
 
 	//return color*imageFade;

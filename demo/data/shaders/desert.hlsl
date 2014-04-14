@@ -25,6 +25,8 @@ float rotBox(float3 p, float r, float s, float speed){
 
 float intersect( float3 p, out float materialID )
 { 
+	float3 op = p;
+	materialID = 1; 	
 	//p.zy = R(p.zy,p.x);
 	
 	float dist = 1000.0f;
@@ -34,49 +36,43 @@ float intersect( float3 p, out float materialID )
 	if(tmpDist < dist) {
 		dist = tmpDist;
 	}
-	
-	materialID = 1; 	
-	float3 op = p;
-	//p.xy = R(p.xy,p.z);
-	
-	p.z = fmod(abs(p.z),2)-1;	
-	//p.x = fmod(abs(p.x),20)-10;
-	p.yz = R(p.yz,PI/2);
-	if(synk1==2)
-		tmpDist = sdTorusN( p, float2(5+cos(op.z/5+beat/10)*2+sin(op.z/5+beat/10), .4),2);
-	if(synk1==4)
-		tmpDist = sdTorusN( p, float2(5+cos(op.z/5+beat/10)*2+sin(op.z/5+beat/10), .3),4);
-	if(synk1==8)
-		tmpDist = sdTorusN( p, float2(5+cos(op.z/5+beat/10)*2+sin(op.z/5+beat/10), .2),8);
-
-	p=op;	
-	
-	if(synk1==10) {
-		p.y = fmod(abs(p.y),16)-4;
-		tmpDist = rotBox(p,8,1, beat/10);
-		tmpDist = min(tmpDist, rotBox(p,16,2, beat/5));
-	}
 
 
-	p=op;	
-	
-	if(tmpDist < dist) {
-		materialID = 2;
-		dist = tmpDist;
-	}
 
-	if(castShadow) {
-		//float tmpDist2 = udRoundBox(p, float3(20+(sin(p.z/2-beat))+(cos(p.z*4-beat))/10,15+(sin(p.z/2-beat))+(cos(p.z*4-beat))/10,50000),4);
-		p.yz = R(p.yz,PI/2);
-		float tmpDist2 = sdCylinder(p, float3(0,0,synk6));
-		tmpDist2+=abs(fbm2(p/28,beat/32)*16);//+sin(p.x/5+beat/2)+cos(p.z/8+beat/3)+cos(p.y/2+beat/4);
+	if(beat > 192) {
+		p.xz = R(p.xz,sin(beat)*0.5);
+		p.xy = R(p.xy,-synk8);
+		p.x = abs(p.x);
 
-		if(-tmpDist2<dist) {
-			materialID = 3; 			
-			dist = -tmpDist2;		
 	
+
+		//p *= 5;
+		tmpDist = udRoundBox(  p+float3(0,.2,0), float3(.3,.3,.1),.0);
+	
+		tmpDist = sminp(tmpDist,udRoundBox(  p-float3(0,.5,0), float3(.87,.3,.1),.0), synk9);	
+
+		tmpDist = sminp(tmpDist,udRoundBox(  p-float3((1.2),0,0), float3(.1,1.2,.1),.0), synk9);
+
+		// yla ala
+		tmpDist = sminp(tmpDist,udRoundBox(  p-float3(0,1.2,0), float3(1.3,.1,.1),.0), synk9);
+		tmpDist = sminp(tmpDist,udRoundBox(  p-float3(1,-1.2,0), float3(0.3,.1,.1),.0), synk9);
+
+
+
+		//tmpDist = min(tmpDist,udRoundBox(  p-float3(4+1.6+5.4*2+1.6+1.4,0,0), float3(1.4,16,1),.2));
+		//tmpDist = min(tmpDist,udRoundBox(  p+float3(4+1.6+5.4*2+1.6+1.4,0,0), float3(1.4*4/3,16,1),.2));
+	
+		//tmpDist = min(tmpDist,udRoundBox(  p+float3(16.25,-2.3+4+1.6+5.4*2+1.6+1.4,0), float3(4,1.4,1),.2));
+		//tmpDist = min(tmpDist,udRoundBox(  p+float3(-16.25,-2.3+4+1.6+5.4*2+1.6+1.4,0), float3(4*4/3,1.4,1),.2));
+
+		if(tmpDist < dist) {
+			materialID = 2;
+			dist = sminp(tmpDist, dist, synk9);
+
+		
 		}
 	}
+	
 	return dist;
 }
 
@@ -90,10 +86,10 @@ float4 main(float2 uv) : COLOR
 	//sphere1.z = 0.5+sin(beat);
 
 	float2 originalUV = uv;
-	float3 rd = {(-1+2*uv)*float2(2.25,1), camFov < .01 ? .01 : camFov};
+	float3 rd = {(-1+2*uv)*float2(ASPECT,1), camFov < .01 ? .01 : camFov};
 	
 	
-	float3 ro = {synk2,synk3,beat*synk4};
+	float3 ro = {synk2,synk3,synk4};
 	
 	rd.yz = R(rd.yz,camRot.x);
 	rd.xz = R(rd.xz,camRot.y);
@@ -110,10 +106,17 @@ float4 main(float2 uv) : COLOR
 	//ray march
 	float dist = rm(rayPosition, rd,.25, 400, id, steps, volumeFog); 
 	//if(id==4) color=.1;
-	dist += pow(perlin(float3(rayPosition.x*10, 0, 0)),2)*20;
+	
 	color = pow((dist/300)*COL6,2);
+	
+	dist += pow(perlin(float3(rayPosition.x*10, 0, 0)),2)*20;
 	color += saturate((COL3*steps/100)/(dist/10));
-	return float4(color,1); 
+
+	if(id == 2) {
+		//color = 0;
+	}
+
+	return saturate(float4(color,1))*fade; 
 }
 
 

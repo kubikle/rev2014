@@ -50,8 +50,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	g_options.bpp = 32;
 	g_options.dWidth = 1280;
 	g_options.dHeight = 1280/16*9;
-	g_options.iWidth = 1280/4;
-	g_options.iHeight = 720/4;
+	g_options.iWidth = 1280/4*2;
+	g_options.iHeight = 720/4*2;
 	g_options.offsetX = 0;
 	g_options.offsetY = 0;
 	g_options.sWidth = 0;

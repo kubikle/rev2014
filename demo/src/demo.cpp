@@ -201,6 +201,9 @@ void LoadImage( string name )
 {
 	if(IsFileModified(name)) {
 	
+#ifdef _DEBUG
+		OutputDebugString(("Loading image: " + name + "\n").c_str());
+#endif
 		ID3D11ShaderResourceView *view;
 		int i = g_positionMap[name];
 		if(i) {				

@@ -20,7 +20,9 @@ bool IsFileModified(string shader) {
 
 
 	if(ftWrite.dwLowDateTime != files[shader].dwLowDateTime) {
-		Sleep(1000);
+		if(files[shader].dwLowDateTime != NULL) {
+			Sleep(1000);
+		}
 		files[shader] = ftWrite;
 		return true;
 	}

@@ -22,6 +22,12 @@ float4 Post(BufferStruct i) : SV_Target
 	//i.color.r += saturate(random(i.uv+beat/10))*(noiseAmount/100);
 	//i.color.g += saturate(random(i.uv+beat/10+3))*(noiseAmount/100);
 	//i.color.b += saturate(random(i.uv+beat/10+5))*(noiseAmount/100);
+
+	i.color *=min(1,sin(i.uv.y*PI)*sin(i.uv.x*PI)*30);
+	
+	i.color.xyz = Desaturate(i.color.xyz,saturation);
+
+	i.color = saturate(i.color);	
 //
 	return i.color;
 }
